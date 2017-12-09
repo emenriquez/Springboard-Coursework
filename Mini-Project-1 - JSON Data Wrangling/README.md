@@ -342,7 +342,7 @@ df['countryname'].value_counts()
 
 We can see that the generated table automatically lists the country occurences in descending order, so the first 10 entries correspond to the top 10 countries with the most projects in this dataset.
 
-Closer inspection reveals that the 9th entry is Africa. Africa is not a country. Just to double check, if we follow one of the url links from the 'url' column of a row for Africa (http://www.worldbank.org/projects/P144902?lang=en) we can see that indeed on the World Bank website, the country for the project is listed as Africa so it doesn't appear to be a reporting error in our dataset. We will leave it as is for now.
+Closer inspection reveals that the 10th entry is Africa. Africa is not a country. Just to double check, if we follow one of the url links from the 'url' column of a row for Africa (http://www.worldbank.org/projects/P144902?lang=en) we can see that indeed on the World Bank website, the country for the project is listed as Africa so it doesn't appear to be a reporting error in our dataset. We will leave it as is for now.
 
 
 ```python
