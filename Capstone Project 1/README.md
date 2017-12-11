@@ -82,19 +82,6 @@ data.head(10)
 
 
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -307,19 +294,6 @@ data[asterisks].head(10)
 
 
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -1063,19 +1037,6 @@ pd.DataFrame(data = NA_data_counts, columns = ['# of missing entries'])
 
 
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -1129,19 +1090,6 @@ pd.DataFrame(data = NA_data_counts, columns = ['# of missing entries'])
 
 
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -1190,7 +1138,7 @@ plt.show()
 ```
 
 
-![png](output_46_0.png)
+![png](images/output_46_0.png)
 
 
 There are mostly cats and dogs in this data, with the remaining animals of Bird, Livestock and Other types. We can look at these categories in more detail to see what kind of outcome data they contain:
@@ -1229,15 +1177,15 @@ plt.show()
 ```
 
 
-![png](output_48_0.png)
+![png](images/output_48_0.png)
 
 
 
-![png](output_48_1.png)
+![png](images/output_48_1.png)
 
 
 
-![png](output_48_2.png)
+![png](images/output_48_2.png)
 
 
 Although there is a much smaller number of entries for these categories, we can see that they each have a good distribution of outcomes, and so for now it will be best to keep these entries in the data for consideration.
@@ -1286,19 +1234,6 @@ data[data['Outcome Type'] == 'Relocate'].head(10)
 
 
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
