@@ -275,14 +275,14 @@ This helps to significantly reduce the number of classes we are working with and
 
 **vii.** Next, the breed and color column categories were reduced significantly by selecting mixed breed entries of the format 'breed/breed' and replacing these entries with the first breed + 'Mix' (e.g. Chihuahua/Terrier => Chihuahua Mix). Similarly, colors of format 'color/color' were separated into 'Primary Color' and 'Secondary Color' entries. This process reduced the number of categories for breeds and colors to a manageable number for each.
 
-    \# of unique breeds in the original dataset: 1948
-    \# of mixed breeds classified by "breed/breed": 1551
-    \# of unique breeds after replacement: 399
+    # of unique breeds in the original dataset: 1948
+    # of mixed breeds classified by "breed/breed": 1551
+    # of unique breeds after replacement: 399
     
     # of unique colors in the original dataset: 491
-    \# of mixed colors classified by "color/color": 435
-    \# of unique primary colors after replacement: 57
-    \# of unique secondary colors after replacement: 51
+    # of mixed colors classified by "color/color": 435
+    # of unique primary colors after replacement: 57
+    # of unique secondary colors after replacement: 51
 
 And finally the breed and color columns were converted into categorical features.
 
