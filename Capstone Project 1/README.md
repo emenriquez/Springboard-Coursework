@@ -81,7 +81,7 @@ plt.show()
 ```
 
 
-![png](output_5_0.png)
+![png](images/output_5_0.png)
 
 
 We can see here that dogs are much more likely to have an outcome resulting in a permanent home than cats.
@@ -125,7 +125,7 @@ plt.show()
 ```
 
 
-![png](output_7_0.png)
+![png](images/output_7_0.png)
 
 
 While numbers for adoption are similar for both cats and dogs, many more dogs are classified as 'Return to Owner' than cats, which denotes dogs that were lost and returned to their owners. A large majority of cats are transferred to other facilities, which may indicate that other facilities are either better equipped to handle the volume of cats, or simply that the real estate at the Austin Animal Center does not allow support for enough cats.
@@ -185,7 +185,7 @@ plt.show()
 ```
 
 
-![png](output_9_0.png)
+![png](images/output_9_0.png)
 
 
 
@@ -236,7 +236,7 @@ plt.show()
 ```
 
 
-![png](output_10_0.png)
+![png](images/output_10_0.png)
 
 
 The distribution of outcomes for male and females in the cases of both cats and dogs shows that there is not a strong preference for either gender. Naturally, since animals are spayed and neutered when possible at animal shelters, most adoptions occur for these types rather than intact gender animals.
@@ -272,7 +272,7 @@ plt.show()
 ```
 
 
-![png](output_12_0.png)
+![png](images/output_12_0.png)
 
 
 There seems to be a wide spread of ages for both cats and dogs, up to 22 years for cats and 20 years for dogs. Most of the animals are less than 4 years old in both cases. It would also be helpful to see the breakdown of outcomes for each of these age groups.
@@ -332,7 +332,7 @@ plt.show()
 ```
 
 
-![png](output_14_0.png)
+![png](images/output_14_0.png)
 
 
 
@@ -384,7 +384,7 @@ plt.show()
 ```
 
 
-![png](output_15_0.png)
+![png](images/output_15_0.png)
 
 
 
@@ -436,7 +436,7 @@ plt.show()
 ```
 
 
-![png](output_16_0.png)
+![png](images/output_16_0.png)
 
 
 As shown above, we can see that while all age groups have a higher frequency of dogs that are placed/returned to their homes, cats have a more complicated distribution. Both young (< 5 years old) and old (> 12 years old) seem to have mixed chances of being placed in a permanent home.
@@ -539,7 +539,7 @@ plt.show()
 ```
 
 
-![png](output_20_0.png)
+![png](images/output_20_0.png)
 
 
 In the plot shown above, we can see that Domestic Shorthair mixed breeds in cats account for almost 80% of the cat entries alone. All entries in the most common cat breeds are mixed, since 'Domestic Shorthair' and 'Domestic Medium Hair' breeds are themselves mixed breed classifications.
@@ -720,7 +720,7 @@ plt.show()
 ```
 
 
-![png](output_26_0.png)
+![png](images/output_26_0.png)
 
 
 We can see that there are two opposing trends for cats and dogs here. For cats, purebreeds have a noticeably higher rate of adoption, while dogs see a drop in adoption rates for those that are not mixed breeds. This may be related to the high occurences of Domestic Shorthair cats at the center. When people come in to browse for pet adoption, it is easier for purebreeds to stand out in appearance when most cats are similar. The distribution of breeds for dogs are much more varied, and so this may not have the same impact on adoptions for dogs.
@@ -752,7 +752,7 @@ plt.show()
 ```
 
 
-![png](output_28_0.png)
+![png](images/output_28_0.png)
 
 
 Above are the 10 most common colors for both cats and dogs. If we investigate the rates of placement in permanent homes by color, it may be possible to extract information on which color animals are preferred by people looking for pets at the Austin Animal Center.
@@ -979,7 +979,7 @@ plt.show()
 ```
 
 
-![png](output_34_0.png)
+![png](images/output_34_0.png)
 
 
 The respective ranks in highest adoption rates for cats and dogs are denoted above the bars for each of the 10 most common colors. We can see again that none of the most common colors for both cats and dogs appear in their respective top lists of adoption rates. This further supports that a sense of exotic appearance of a pet may be a primary driver in people's choice of a pet.
@@ -1022,7 +1022,7 @@ plt.show()
 ```
 
 
-![png](output_36_0.png)
+![png](images/output_36_0.png)
 
 
 The data above shows that for both cats and dogs, a secondary color slightly improves the rates of adoption. Animals with distinctive color combinations in their coats may stand out more visually to potential pet owners.
@@ -1037,9 +1037,6 @@ print('The dataset covers a time period between {0} and {1}'.format(data['DateTi
 ```
 
     The dataset covers a time period between 2013-10-01 09:31:00 and 2017-12-10 12:59:00
-    
-
-[[Explain that I will be looking at statistics for 2014-2017]]
 
 
 ```python
@@ -1111,7 +1108,7 @@ plt.show()
 ```
 
 
-![png](output_43_0.png)
+![png](images/output_43_0.png)
 
 
 The graph above shows the average rates of placement in permanent homes for cats and dogs broken down by year. Although dogs have experienced a relative upward trend with time, cats seem to show a drop in rates from 2013 to 2014, but then the same relative upward trend. This may be an anomaly of our dataset, since we only have 2013 data for the months of October-December. If there is a dependence on adoptions vs. months of the year, this can introduce a bias into the 2013 data points.
@@ -1157,7 +1154,7 @@ plt.show()
 ```
 
 
-![png](output_46_0.png)
+![png](images/output_46_0.png)
 
 
 By looking at the average adoption rates broken down by month we can see that for both cats and dogs, there seems to be spikes in adoptions around winter months (Nov. - Feb.) and summer months (Jun. - Aug.). The main difference here is that cats seem to have a much stronger dependence on the month of the year than dogs, which remains relatively consistent.
@@ -1207,7 +1204,7 @@ plt.show()
 ```
 
 
-![png](output_49_0.png)
+![png](images/output_49_0.png)
 
 
 We can see that the variations in adoptions for cats is again much larger than that for dogs, which is relatively consistent. 
