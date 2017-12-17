@@ -1,1523 +1,1219 @@
 
-# Understanding Factors in Animal Shelter Pet Adoption - Data Wrangling
+# Understanding Factors in Animal Shelter Pet Adoption - Data Story
 
 In efforts to understand trends in pet adoption outcomes, the Austin Animal Center has provided data relating to the pets in their adoption center. Understanding this data and using it to model the factors that influence pet adoption could lead to recommendations that improve the performance of the center and help more pets find homes.
 
 ### Objective
 
-In this project I will be exploring the dataset and using various data wrangling techniques to prepare the data via basic data wrangling techniques in order to prepare the data for analysis. This will include the following steps:
+In this project I will be exploring the data and using visualizations to answer some basic questions, including:
 
-   1. Loading the data and extracting general info and structure
-   2. Verifying that data is tidy
-   3. Identifying & dealing with missing values
-   4. Identifying & dealing with outliers
-
-### 1. Data Info and Structure
-
-First I will start by loading the required packages, as well as the dataset which can be found **[here](https://data.austintexas.gov/Health-and-Community-Services/Austin-Animal-Center-Outcomes/9t4d-g238)**
-
-**Note:** This dataset is updated hourly, and was accessed on Sunday, December 12th 2017 at 19:00 UTC for this project.
+   1. How likely are adoptions for cats vs. dogs?
+   2. Do factors such as color, breed and age affect the outcome for animal adoptions?
+   3. Are there trends by years for adoptions of cats and dogs?
+   
+First I will begin by importing the necessary packages for analysis, as well as the dataset that was cleaned and formatted **[here](https://github.com/emenriquez/Springboard-Coursework/blob/master/Capstone%20Project%201/Data%20Wrangling%20-%20Pet%20Adoption%20V2.ipynb)**
 
 
 ```python
 # For working with dataframes and manipulation
+import numpy as np
 import pandas as pd
 
+# Used to create and customize graphics/plots
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+
+# Used to work with datetime and timedelta objects
+from datetime import datetime, timedelta
 ```
 
 
 ```python
-# Load the dataset locally
-data = pd.read_csv('data/Austin_Animal_Center_Outcomes.csv')
+# Load the formatted dataset
+data = pd.read_pickle('data/data_clean.pkl')
+```
+
+### 1. How Likely are adoptions for Cats vs. Dogs?
+
+It is very important to understand the general distributions of outcomes for cats and dogs, as well as the total number of each that the center recieves, in order to efficiently provide resources to shelter these animals. This section will break down the outcomes for both cats and dogs in order to gain more insight into the placement of these animals in permanent homes.
+
+
+```python
+# Separate dataset entries into those for cats and dogs
+cats = data[data['Animal Type'] == 'Cat']
+dogs = data[data['Animal Type'] == 'Dog']
 ```
 
 
 ```python
-# Display number of entries and features in the data
-print('# of entries in this dataset: {0}'.format(data.shape[0]))
-print('# of features per entry: {0}'.format(data.shape[1]))
+# Set figure and font size
+plt.subplots(figsize=(12, 7))
+plt.rc('font', size=14)
+
+# Create pie chart for cat outcomes
+plt.subplot(1, 2, 1)
+cat_homes = [(cats['Found Home'] == 1).sum(), (cats['Found Home'] == 0).sum()]
+labels1 = ['Home Found', 'No Home Found']
+plt.pie(cat_homes,
+        labels=labels1,
+        autopct='%1.1f%%'
+       )
+
+# plot formatting
+plt.axis('equal')
+plt.title('Distribution of Outcomes\n for Cats', size=20)
+
+
+# Create pie chart for dog outcomes
+plt.subplot(1, 2, 2)
+dog_homes = [(dogs['Found Home'] == 1).sum(), (dogs['Found Home'] == 0).sum()]
+labels2 = ['Home Found', 'No Home Found']
+plt.pie(dog_homes,
+        labels=labels2,
+        autopct='%1.1f%%'
+       )
+
+# plot formatting
+plt.axis('equal')
+plt.title('Distribution of Outcomes\n for Dogs', size=20)
+
+plt.show()
 ```
 
-    # of entries in this dataset: 76133
-    # of features per entry: 12
+
+![png](output_5_0.png)
+
+
+We can see here that dogs are much more likely to have an outcome resulting in a permanent home than cats.
+
+We can also break these outcomes down further by their specific outcome type:
+
+
+```python
+# Set figure and font size
+plt.subplots(figsize=(12, 10))
+plt.rc('font', size=14)
+
+# Create pie chart for cat outcomes
+plt.subplot(1, 2, 1)
+cats['Outcome Type'].value_counts().plot(kind='pie',
+                                         autopct='%1.1f%%',
+                                         labels=None,
+                                         legend=True,
+                                         colors=['lightskyblue', 'orange', 'yellowgreen',  'lightcoral', 'mediumorchid']
+                                        )
+
+# plot formatting
+plt.axis('equal')
+plt.title('Distribution of Outcomes\n for Cats', size=20)
+
+
+# Create pie chart for dog outcomes
+plt.subplot(1, 2, 2)
+dogs['Outcome Type'].value_counts().plot(kind='pie',
+                                         autopct='%1.1f%%',
+                                         labels=None,
+                                         legend=True,
+                                         colors=['orange', 'lightcoral', 'lightskyblue', 'yellowgreen',  'mediumorchid']
+                                        )
+
+# plot formatting
+plt.axis('equal')
+plt.title('Distribution of Outcomes\n for Dogs', size=20)
+
+plt.show()
+```
+
+
+![png](output_7_0.png)
+
+
+While numbers for adoption are similar for both cats and dogs, many more dogs are classified as 'Return to Owner' than cats, which denotes dogs that were lost and returned to their owners. A large majority of cats are transferred to other facilities, which may indicate that other facilities are either better equipped to handle the volume of cats, or simply that the real estate at the Austin Animal Center does not allow support for enough cats.
+
+### 2. Analysis of Adoption Outcomes vs. Animal Attributes
+
+In understanding the animal attributes that most affect the outcomes of animals at this center, we can identify which animals have a higher chance of being adopted for this area. This, in conjunction with data on neighboring or partner centers might allow for avenues to 'match' animals that can maximize their chance of adoption in each area.
+
+
+#### i. Gender
+
+
+```python
+# Separate Cats by Sex upon Outcome
+male_n = cats[cats['Sex upon Outcome'] == 'Neutered Male']
+male_i = cats[cats['Sex upon Outcome'] == 'Intact Male']
+female_s = cats[cats['Sex upon Outcome'] == 'Spayed Female']
+female_i = cats[cats['Sex upon Outcome'] == 'Intact Female']
+unknown = cats[cats['Sex upon Outcome'] == 'Unknown']
+
+# find percentages of cats that found homes
+cat_homes_pct = [(male_n['Found Home'] == 1).sum()/male_n.shape[0],
+             (male_i['Found Home'] == 1).sum()/male_i.shape[0],
+             (female_s['Found Home'] == 1).sum()/female_s.shape[0],
+             (female_i['Found Home'] == 1).sum()/female_i.shape[0],
+             (unknown['Found Home'] == 1).sum()/unknown.shape[0]]
+
+cat_no_homes_pct = [(male_n['Found Home'] == 0).sum()/male_n.shape[0],
+             (male_i['Found Home'] == 0).sum()/male_i.shape[0],
+             (female_s['Found Home'] == 0).sum()/female_s.shape[0],
+             (female_i['Found Home'] == 0).sum()/female_i.shape[0],
+             (unknown['Found Home'] == 0).sum()/unknown.shape[0]]
+
+# Create stacked bar chart to compare outcome vs. sex upon outcome
+fig, ax = plt.subplots(figsize=(12,8))
+plt.rc('font', size=14)
+
+ind = np.arange(5)
+
+p1 = ax.bar(ind,
+            cat_homes_pct,
+            color='lightskyblue')
+
+p2 = ax.bar(ind,
+            cat_no_homes_pct,
+            bottom=cat_homes_pct,
+            color='mediumorchid')
+
+ax.set_title('Distribution of Cat Outcomes by Gender')
+ax.set_xticks(ind)
+ax.set_xticklabels(('Neutered Male', 'Intact Male', 'Spayed Female', 'Intact Female', 'Unknown'))
+
+ax.legend((p1[0], p2[0]), ('Home Found', 'No Home Found'), loc='best')
+ax.autoscale_view()
+
+plt.show()
+```
+
+
+![png](output_9_0.png)
+
+
+
+```python
+# Separate dogs by Sex upon Outcome
+male_n = dogs[dogs['Sex upon Outcome'] == 'Neutered Male']
+male_i = dogs[dogs['Sex upon Outcome'] == 'Intact Male']
+female_s = dogs[dogs['Sex upon Outcome'] == 'Spayed Female']
+female_i = dogs[dogs['Sex upon Outcome'] == 'Intact Female']
+unknown = dogs[dogs['Sex upon Outcome'] == 'Unknown']
+
+# find percentages of dogs that found homes
+dog_homes_pct = [(male_n['Found Home'] == 1).sum()/male_n.shape[0],
+             (male_i['Found Home'] == 1).sum()/male_i.shape[0],
+             (female_s['Found Home'] == 1).sum()/female_s.shape[0],
+             (female_i['Found Home'] == 1).sum()/female_i.shape[0],
+             (unknown['Found Home'] == 1).sum()/unknown.shape[0]]
+
+dog_no_homes_pct = [(male_n['Found Home'] == 0).sum()/male_n.shape[0],
+             (male_i['Found Home'] == 0).sum()/male_i.shape[0],
+             (female_s['Found Home'] == 0).sum()/female_s.shape[0],
+             (female_i['Found Home'] == 0).sum()/female_i.shape[0],
+             (unknown['Found Home'] == 0).sum()/unknown.shape[0]]
+
+# Create stacked bar chart to compare outcome vs. sex upon outcome
+fig, ax = plt.subplots(figsize=(12,8))
+plt.rc('font', size=14)
+
+ind = np.arange(5)
+
+p1 = ax.bar(ind,
+            dog_homes_pct,
+            color='dodgerblue')
+
+p2 = ax.bar(ind,
+            dog_no_homes_pct,
+            bottom=dog_homes_pct,
+            color='firebrick')
+
+ax.set_title('Distribution of Dog Outcomes by Sex')
+ax.set_xticks(ind)
+ax.set_xticklabels(('Neutered Male', 'Intact Male', 'Spayed Female', 'Intact Female', 'Unknown'))
+
+ax.legend((p1[0], p2[0]), ('Home Found', 'No Home Found'), loc='best')
+ax.autoscale_view()
+
+plt.show()
+```
+
+
+![png](output_10_0.png)
+
+
+The distribution of outcomes for male and females in the cases of both cats and dogs shows that there is not a strong preference for either gender. Naturally, since animals are spayed and neutered when possible at animal shelters, most adoptions occur for these types rather than intact gender animals.
+
+#### ii. Age
+
+
+```python
+# Convert ages to years
+cat_ages_in_years = cats['Age upon Outcome'].apply(lambda x: x//timedelta(days=365.25))
+dog_ages_in_years = dogs['Age upon Outcome'].apply(lambda x: x//timedelta(days=365.25))
+
+# Plot distribution of cat ages
+plt.subplots(figsize=(14,8))
+plt.subplot(1, 2, 1)
+plt.hist(cat_ages_in_years, bins=23, color='yellow', edgecolor='black', linewidth=1.2)
+plt.title('Distribution of Cat Ages')
+plt.ylabel('Frequency (log scale)')
+plt.xlabel('Age (in Years)')
+plt.yscale('log')
+plt.xticks([0, 4, 8, 12, 16, 20])
+
+# Plot distribution of dog ages
+plt.subplot(1, 2, 2)
+plt.hist(dog_ages_in_years, bins=21, color='green', edgecolor='black', linewidth=1.2)
+plt.title('Distribution of Dog Ages')
+plt.yscale('log')
+plt.ylabel('Frequency (log scale)')
+plt.xlabel('Age (in Years)')
+plt.xticks([0, 4, 8, 12, 16, 20])
+
+plt.show()
+```
+
+
+![png](output_12_0.png)
+
+
+There seems to be a wide spread of ages for both cats and dogs, up to 22 years for cats and 20 years for dogs. Most of the animals are less than 4 years old in both cases. It would also be helpful to see the breakdown of outcomes for each of these age groups.
+
+
+```python
+cat_ages_in_years[cats['Found Home'] == 0]
+
+# Plot distribution of cat ages for cats who found homes
+plt.subplots(figsize=(14,8))
+plt.subplot(1, 2, 1)
+cats_fh_freq, cats_bins, _ = plt.hist(cat_ages_in_years[cats['Found Home'] == 1],
+                                      bins=23, 
+                                      color='yellow', 
+                                      edgecolor='black', 
+                                      linewidth=1.2, 
+                                      alpha = 0.3
+                                     )
+cats_nofh_freq, _, _ = plt.hist(cat_ages_in_years[cats['Found Home'] == 0],
+                                bins=23,
+                                color='purple',
+                                edgecolor='black',
+                                linewidth=1.2,
+                                alpha = 0.3
+                               )
+plt.legend(['Home Found', 'No Home Found'])
+plt.title('Distribution of Cat Outcomes vs. Age')
+plt.ylabel('Frequency')
+plt.xlabel('Age (in Years)')
+plt.yscale('log')
+plt.xticks([0, 4, 8, 12, 16, 20])
+
+# Plot distribution of dog ages
+plt.subplot(1, 2, 2)
+dogs_fh_freq, dogs_bins, _ = plt.hist(dog_ages_in_years[dogs['Found Home'] == 1],
+                                      bins=21, 
+                                      color='green', 
+                                      edgecolor='black',
+                                      linewidth=1.2,
+                                      alpha = 0.3
+                                     )
+dogs_nofh_freq, _, _ = plt.hist(dog_ages_in_years[dogs['Found Home'] == 0],
+                                bins=20, 
+                                color='red', 
+                                edgecolor='black', 
+                                linewidth=1.2, 
+                                alpha = 0.3
+                               )
+plt.legend(['Home Found', 'No Home Found'])
+plt.title('Distribution of Dog Outcomes vs. Age')
+plt.yscale('log')
+plt.ylabel('Frequency')
+plt.xlabel('Age (in Years)')
+plt.xticks([0, 4, 8, 12, 16, 20])
+
+plt.show()
+```
+
+
+![png](output_14_0.png)
+
+
+
+```python
+# Add a zero value to the last bin of dogs_nofh_freq so that it matches the number of bins of dogs who found homes
+dogs_nofh_freq2 = np.append(dogs_nofh_freq, 0)
+
+# Initialize figure
+plt.subplots(figsize=(14,10))
+
+# Display difference between cats that either found homes or did not find homes
+plt.subplot(1, 2, 1)
+
+# Generate differenct colors for positive and negative values
+cat_colors = np.array([(0.7,0.3,0.8)]*len(cats_fh_freq))
+cat_colors[cats_fh_freq-cats_nofh_freq >= 0] = (1,1,0.6)
+
+# Create bar graph
+barlist=plt.bar(cats_bins[1:], 
+                cats_fh_freq-cats_nofh_freq, 
+                color=cat_colors, 
+                edgecolor='k'
+               )
+plt.ylabel('Frequency')
+plt.xlabel('Age (in Years)')
+plt.xticks([0, 4, 8, 12, 16, 20])
+plt.title('Dominant Outcomes for Cats vs. Age')
+
+# Create a legend for cat outcomes plot
+pos_patch = mpatches.Patch(facecolor=(1,1,0.6), edgecolor='k', label='Home Found')
+neg_patch = mpatches.Patch(facecolor=(0.7,0.3,0.8), edgecolor='k', label='No Home Found')
+plt.legend(handles=[pos_patch, neg_patch])
+
+# Display difference between cats that either found homes or did not find homes
+plt.subplot(1, 2, 2)
+plt.bar(dogs_bins[1:], 
+        dogs_fh_freq-dogs_nofh_freq2, 
+        color='lightgreen', 
+        edgecolor='k'
+       )
+plt.ylabel('Frequency')
+plt.xlabel('Age (in Years)')
+plt.xticks([0, 4, 8, 12, 16, 20])
+plt.title('Dominant Outcomes for Dogs vs. Age')
+plt.legend(['Home Found'])
+
+
+plt.show()
+```
+
+
+![png](output_15_0.png)
+
+
+
+```python
+# Add a zero value to the last bin of dogs_nofh_freq so that it matches the number of bins of dogs who found homes
+dogs_nofh_freq2 = np.append(dogs_nofh_freq, 0)
+
+# Initialize figure
+plt.subplots(figsize=(14,10))
+
+# Display difference between cats that either found homes or did not find homes
+plt.subplot(1, 2, 1)
+
+# Generate differenct colors for positive and negative values
+cat_colors = np.array([(0.7,0.3,0.8)]*len(cats_fh_freq))
+cat_colors[cats_fh_freq-cats_nofh_freq >= 0] = (1,1,0.6)
+
+# Create bar graph
+barlist=plt.bar(cats_bins[1:], 
+                100*(cats_fh_freq-cats_nofh_freq)/(cats_fh_freq+cats_nofh_freq), 
+                color=cat_colors, 
+                edgecolor='k'
+               )
+plt.ylabel('% of Total Outcomes per Age group')
+plt.xlabel('Age (in Years)')
+plt.xticks([0, 4, 8, 12, 16, 20])
+plt.title('Dominant Outcomes for Cats vs. Age')
+
+# Create a legend for cat outcomes plot
+pos_patch = mpatches.Patch(facecolor=(1,1,0.6), edgecolor='k', label='Home Found')
+neg_patch = mpatches.Patch(facecolor=(0.7,0.3,0.8), edgecolor='k', label='No Home Found')
+plt.legend(handles=[pos_patch, neg_patch])
+
+# Display difference between cats that either found homes or did not find homes
+plt.subplot(1, 2, 2)
+plt.bar(dogs_bins[1:], 
+        100*(dogs_fh_freq-dogs_nofh_freq2)/(dogs_fh_freq+dogs_nofh_freq2), 
+        color='lightgreen', 
+        edgecolor='k'
+       )
+plt.ylabel('% of Total Outcomes per Age Group')
+plt.xlabel('Age (in Years)')
+plt.xticks([0, 4, 8, 12, 16, 20])
+plt.title('Dominant Outcomes for Dogs vs. Age')
+plt.legend(['Home Found'])
+
+
+plt.show()
+```
+
+
+![png](output_16_0.png)
+
+
+As shown above, we can see that while all age groups have a higher frequency of dogs that are placed/returned to their homes, cats have a more complicated distribution. Both young (< 5 years old) and old (> 12 years old) seem to have mixed chances of being placed in a permanent home.
+
+One interesting note is that in both cases, the oldest animals seem to have higher chances of adoption.
+
+#### iii. Breed
+
+
+```python
+# Generate Top 10 ranking breeds for cats by frequency
+top10_cat_breeds = pd.DataFrame(data= {'Cat Breed': cats['Breed'].value_counts().index.values[:10],
+                   '# of Cats': cats['Breed'].value_counts().values[:10]},
+             columns = ['Cat Breed', '# of Cats'],
+             index=range(1,11)
+                    )
+
+# Label the index as ranking
+top10_cat_breeds.index.name = 'Rank'
+
+# Display top10 rankings
+print('10 Most Common Cat Breeds\n',top10_cat_breeds)
+print('\nTotal Number of Distinct Cat Breeds: {0}'.format(len(cats['Breed'].unique())))
+print('Fraction of Total Cats Occupied by 10 most common breeds: {:0.2f} %'.format(100*cats['Breed'].value_counts()[:10].sum()/cats['Breed'].value_counts().sum()))
+
+# Generate Top 10 ranking breeds for dogs by frequency
+top10_dog_breeds = pd.DataFrame(data= {'Dog Breed': dogs['Breed'].value_counts().index.values[:10],
+                   '# of Dogs': dogs['Breed'].value_counts().values[:10]},
+             columns = ['Dog Breed', '# of Dogs'],
+             index=range(1,11)
+                    )
+
+# Label the index as ranking
+top10_dog_breeds.index.name = 'Rank'
+
+# Display top10 rankings
+print('\n\n10 Most Common Dog Breeds\n',top10_dog_breeds)
+print('\nTotal Number of Distinct Dog Breeds: {0}'.format(len(dogs['Breed'].unique())))
+print('Fraction of Total Dogs Occupied by 10 most common breeds: {:0.2f} %'.format(100*dogs['Breed'].value_counts()[:10].sum()/dogs['Breed'].value_counts().sum()))
+
+```
+
+    10 Most Common Cat Breeds
+                          Cat Breed  # of Cats
+    Rank                                     
+    1       Domestic Shorthair Mix      22773
+    2     Domestic Medium Hair Mix       2257
+    3        Domestic Longhair Mix       1204
+    4                  Siamese Mix        997
+    5           Domestic Shorthair        378
+    6       American Shorthair Mix        194
+    7                 Snowshoe Mix        150
+    8         Domestic Medium Hair        127
+    9               Maine Coon Mix        103
+    10                    Manx Mix         85
+    
+    Total Number of Distinct Cat Breeds: 55
+    Fraction of Total Cats Occupied by 10 most common breeds: 98.53 %
+    
+    
+    10 Most Common Dog Breeds
+                           Dog Breed  # of Dogs
+    Rank                                      
+    1                  Pit Bull Mix       6283
+    2        Labrador Retriever Mix       5628
+    3       Chihuahua Shorthair Mix       5264
+    4           German Shepherd Mix       2239
+    5     Australian Cattle Dog Mix       1281
+    6                 Dachshund Mix       1094
+    7             Border Collie Mix        827
+    8                     Boxer Mix        820
+    9          Miniature Poodle Mix        743
+    10                Catahoula Mix        581
+    
+    Total Number of Distinct Dog Breeds: 345
+    Fraction of Total Dogs Occupied by 10 most common breeds: 57.78 %
     
 
+In  both categories, we can see that mixed breeds are the most common. This is not surprising, though the distribution above shows that the breeds of dogs are much more varied than cats. The 10 most common breeds of dogs only account for about 58% of the total population of dogs that have gone through the center, but for cats the 10 most common breeds account for over 98% of the entries.
+
 
 ```python
-# Display general information on dataset
-data.info()
+plt.subplots(figsize=(14, 8))
+
+# Create plot to show distribution of most common cat breeds by percent of total cats
+plt.subplot(1, 2, 1)
+(100*cats['Breed'].value_counts()[:10]/cats['Breed'].value_counts().sum()).plot(kind='bar', color='gold', edgecolor='k')
+plt.ylabel('% of Total Cats')
+plt.xlabel('Breed')
+plt.title('Distribution of 10 Most Common Cat Breeds')
+
+# Create plot to show distribution of most common dog breeds by percent of total dogs
+plt.subplot(1, 2, 2)
+(100*dogs['Breed'].value_counts()[:10]/dogs['Breed'].value_counts().sum()).plot(kind='bar', edgecolor='k')
+plt.ylabel('% of Total Dogs')
+plt.xlabel('Breed')
+plt.title('Distribution of 10 Most Common Dog Breeds')
+
+plt.show()
 ```
 
-    <class 'pandas.core.frame.DataFrame'>
-    RangeIndex: 76133 entries, 0 to 76132
-    Data columns (total 12 columns):
-    Animal ID           76133 non-null object
-    Name                52741 non-null object
-    DateTime            76133 non-null object
-    MonthYear           76133 non-null object
-    Date of Birth       76133 non-null object
-    Outcome Type        76123 non-null object
-    Outcome Subtype     35280 non-null object
-    Animal Type         76133 non-null object
-    Sex upon Outcome    76131 non-null object
-    Age upon Outcome    76123 non-null object
-    Breed               76133 non-null object
-    Color               76133 non-null object
-    dtypes: object(12)
-    memory usage: 7.0+ MB
+
+![png](output_20_0.png)
+
+
+In the plot shown above, we can see that Domestic Shorthair mixed breeds in cats account for almost 80% of the cat entries alone. All entries in the most common cat breeds are mixed, since 'Domestic Shorthair' and 'Domestic Medium Hair' breeds are themselves mixed breed classifications.
+
+Next we can investigate the outcomes by breed:
+
+
+```python
+# Find percentage of cats that found homes by breed
+cat_breeds_fh = {}
+for breed in cats['Breed'].unique():
+    fh_temp = cats.loc[(cats['Found Home'] == 1) & (cats['Breed'] == breed)].shape[0]
+    total_temp = cats.loc[cats['Breed'] == breed].shape[0]
+    cat_breeds_fh[breed] = fh_temp/total_temp
+
+# Create ranking lists
+top10_cat_breeds_fh = pd.Series(cat_breeds_fh).sort_values(ascending=False)[:10]
+bottom10_cat_breeds_fh = pd.Series(cat_breeds_fh).sort_values()[:10]
+
+# Format dataframe for display
+top10_cat_breeds_fh2 = pd.DataFrame(data={'Breed': top10_cat_breeds_fh.index,
+                                          '% of Breed that Found Home': 100*top10_cat_breeds_fh.values
+                                         },
+                                    columns=['Breed', '% of Breed that Found Home'],
+                                    index=range(1,11)
+                                   )
+
+bottom10_cat_breeds_fh2 = pd.DataFrame(data={'Breed': bottom10_cat_breeds_fh.index,
+                                          '% of Breed that Found Home': 100*bottom10_cat_breeds_fh.values
+                                         },
+                                    columns=['Breed', '% of Breed that Found Home'],
+                                    index=range(1,11)
+                                   )
+
+# Rename index to ranking
+top10_cat_breeds_fh2.index.name = 'Rank'
+bottom10_cat_breeds_fh2.index.name = 'Rank'
+
+
+# Display Rankings
+print('Cat Breeds with highest percentage of Homes Found\n', top10_cat_breeds_fh2)
+print('\nCat Breeds with lowest percentage of Homes Found\n', bottom10_cat_breeds_fh2)
+```
+
+    Cat Breeds with highest percentage of Homes Found
+                            Breed  % of Breed that Found Home
+    Rank                                                    
+    1            Turkish Van Mix                       100.0
+    2          British Shorthair                       100.0
+    3              Devon Rex Mix                       100.0
+    4            Cornish Rex Mix                       100.0
+    5     Munchkin Shorthair Mix                       100.0
+    6                 Ocicat Mix                       100.0
+    7            Oriental Sh Mix                       100.0
+    8           Havana Brown Mix                       100.0
+    9                    Burmese                       100.0
+    10    Pixiebob Shorthair Mix                       100.0
+    
+    Cat Breeds with lowest percentage of Homes Found
+                              Breed  % of Breed that Found Home
+    Rank                                                      
+    1         Exotic Shorthair Mix                    0.000000
+    2                         Manx                    0.000000
+    3                    Devon Rex                    0.000000
+    4                   Birman Mix                    0.000000
+    5        Munchkin Longhair Mix                    0.000000
+    6           Turkish Angora Mix                   25.000000
+    7                    Himalayan                   33.333333
+    8       American Shorthair Mix                   40.206186
+    9       Domestic Shorthair Mix                   46.476090
+    10    Domestic Medium Hair Mix                   48.958795
     
 
-There are a few details to mention here. Firstly we can see that within our 12 columns, there seem to be some missing entries in several of the columns, which may need to be addressed later on. In addition, all of the row types are classified as 'object', which can most likely be handled more efficiently if we are able to parse out specific types such as the 'DateTime' column. This column can be handled with much more functionality if we are able to convert it to a Datetime object in our dataframe.
-
-In order to get more information, we will preview the first few rows of the data.
+All of the cat breeds with the highest percentages of placement in permanent homes represent breeds that are somewhat exotic when compared to the population that can be found in Austin, TX. We can also see that the Domestic Shorthair Mix that dominates the cat population in this dataset has a fairly low rate of adoption with ~46%.
 
 
 ```python
-# Display first 10 entries
-data.head(10)
+# Find percentage of dogs that found homes by breed
+dog_breeds_fh = {}
+for breed in dogs['Breed'].unique():
+    fh_temp = dogs.loc[(dogs['Found Home'] == 1) & (dogs['Breed'] == breed)].shape[0]
+    total_temp = dogs.loc[dogs['Breed'] == breed].shape[0]
+    dog_breeds_fh[breed] = fh_temp/total_temp
+
+# Create ranking lists
+top10_dog_breeds_fh = pd.Series(dog_breeds_fh).sort_values(ascending=False)[:10]
+bottom10_dog_breeds_fh = pd.Series(dog_breeds_fh).sort_values()[:10]
+
+# Format dataframe for display
+top10_dog_breeds_fh2 = pd.DataFrame(data={'Breed': top10_dog_breeds_fh.index,
+                                          '% of Breed that Found Home': 100*top10_dog_breeds_fh.values
+                                         },
+                                    columns=['Breed', '% of Breed that Found Home'],
+                                    index=range(1,11)
+                                   )
+
+bottom10_dog_breeds_fh2 = pd.DataFrame(data={'Breed': bottom10_dog_breeds_fh.index,
+                                          '% of Breed that Found Home': 100*bottom10_dog_breeds_fh.values
+                                         },
+                                    columns=['Breed', '% of Breed that Found Home'],
+                                    index=range(1,11)
+                                   )
+
+# Rename index to ranking
+top10_dog_breeds_fh2.index.name = 'Rank'
+bottom10_dog_breeds_fh2.index.name = 'Rank'
+
+
+# Display Rankings
+print('Dog Breeds with highest percentage of Homes Found\n', top10_dog_breeds_fh2)
+print('\nDog Breeds with lowest percentage of Homes Found\n', bottom10_dog_breeds_fh2)
 ```
 
-
-
-
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Animal ID</th>
-      <th>Name</th>
-      <th>DateTime</th>
-      <th>MonthYear</th>
-      <th>Date of Birth</th>
-      <th>Outcome Type</th>
-      <th>Outcome Subtype</th>
-      <th>Animal Type</th>
-      <th>Sex upon Outcome</th>
-      <th>Age upon Outcome</th>
-      <th>Breed</th>
-      <th>Color</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>A741715</td>
-      <td>*Pebbles</td>
-      <td>01/11/2017 06:17:00 PM</td>
-      <td>01/11/2017 06:17:00 PM</td>
-      <td>03/07/2016</td>
-      <td>Adoption</td>
-      <td>NaN</td>
-      <td>Cat</td>
-      <td>Spayed Female</td>
-      <td>10 months</td>
-      <td>Domestic Shorthair Mix</td>
-      <td>Calico</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>A658751</td>
-      <td>Benji</td>
-      <td>11/13/2016 01:38:00 PM</td>
-      <td>11/13/2016 01:38:00 PM</td>
-      <td>07/14/2011</td>
-      <td>Return to Owner</td>
-      <td>NaN</td>
-      <td>Dog</td>
-      <td>Neutered Male</td>
-      <td>5 years</td>
-      <td>Border Terrier Mix</td>
-      <td>Tan</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>A721285</td>
-      <td>NaN</td>
-      <td>02/24/2016 02:42:00 PM</td>
-      <td>02/24/2016 02:42:00 PM</td>
-      <td>02/24/2014</td>
-      <td>Euthanasia</td>
-      <td>Suffering</td>
-      <td>Other</td>
-      <td>Unknown</td>
-      <td>2 years</td>
-      <td>Raccoon Mix</td>
-      <td>Black/Gray</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>A746650</td>
-      <td>Rose</td>
-      <td>04/07/2017 11:58:00 AM</td>
-      <td>04/07/2017 11:58:00 AM</td>
-      <td>04/06/2016</td>
-      <td>Return to Owner</td>
-      <td>NaN</td>
-      <td>Dog</td>
-      <td>Intact Female</td>
-      <td>1 year</td>
-      <td>Labrador Retriever/Jack Russell Terrier</td>
-      <td>Yellow</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>A750122</td>
-      <td>Happy Camper</td>
-      <td>05/24/2017 06:36:00 PM</td>
-      <td>05/24/2017 06:36:00 PM</td>
-      <td>04/08/2017</td>
-      <td>Transfer</td>
-      <td>Partner</td>
-      <td>Dog</td>
-      <td>Intact Male</td>
-      <td>1 month</td>
-      <td>Labrador Retriever Mix</td>
-      <td>Black</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>A756696</td>
-      <td>Shakti</td>
-      <td>09/01/2017 11:23:00 AM</td>
-      <td>09/01/2017 11:23:00 AM</td>
-      <td>08/24/2014</td>
-      <td>Return to Owner</td>
-      <td>NaN</td>
-      <td>Cat</td>
-      <td>Spayed Female</td>
-      <td>3 years</td>
-      <td>Domestic Shorthair Mix</td>
-      <td>Blue/White</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>A684346</td>
-      <td>NaN</td>
-      <td>07/22/2014 04:04:00 PM</td>
-      <td>07/22/2014 04:04:00 PM</td>
-      <td>07/07/2014</td>
-      <td>Transfer</td>
-      <td>Partner</td>
-      <td>Cat</td>
-      <td>Intact Male</td>
-      <td>2 weeks</td>
-      <td>Domestic Shorthair Mix</td>
-      <td>Orange Tabby</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>A666430</td>
-      <td>Lucy</td>
-      <td>11/07/2013 11:47:00 AM</td>
-      <td>11/07/2013 11:47:00 AM</td>
-      <td>11/06/2012</td>
-      <td>Transfer</td>
-      <td>Partner</td>
-      <td>Dog</td>
-      <td>Spayed Female</td>
-      <td>1 year</td>
-      <td>Beagle Mix</td>
-      <td>White/Brown</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>A675708</td>
-      <td>*Johnny</td>
-      <td>06/03/2014 02:20:00 PM</td>
-      <td>06/03/2014 02:20:00 PM</td>
-      <td>03/31/2013</td>
-      <td>Adoption</td>
-      <td>NaN</td>
-      <td>Dog</td>
-      <td>Neutered Male</td>
-      <td>1 year</td>
-      <td>Pit Bull</td>
-      <td>Blue/White</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>A680386</td>
-      <td>Monday</td>
-      <td>06/15/2014 03:50:00 PM</td>
-      <td>06/15/2014 03:50:00 PM</td>
-      <td>06/02/2005</td>
-      <td>Transfer</td>
-      <td>Partner</td>
-      <td>Dog</td>
-      <td>Neutered Male</td>
-      <td>9 years</td>
-      <td>Miniature Schnauzer Mix</td>
-      <td>White</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-This table gives a much better look at what is going on in the data. Starting from the leftmost column are the following observations:
-
-   1. **Animal ID** - This is a unique identifier for each entry that is a letter combined with a number. This seems well-formatted.
-     
-   2. **Name** - Some entries are missing here, and there are also some entries with asterisks before the names (e.g. \*Pebbles, \*Johnny). It will be useful if we can find out the meaning of the asterisk in this field.  
-     
-   3. **DateTime** and **MonthYear** - These columns look like datetime objects, but they look identical for the entries we see. If we verify that the columns are identical, we may be better served removing one.
-     
-   4. **Date of Birth** - This year may also be converted into a datetime object, so that we can perform time-series analysis with this information.
-     
-   5. **Outcome Type** - There are several categories in this column, and we may be able to convert the entries into categories for easier handling.
-     
-   6. **Outcome Subtype** - This has many missing entries, and we only see categories for Euthanasia and Transfer corresponding outcome types. Depending on the number of subtypes for these types, it may be more efficient to integrate them into the outcome type category.
-     
-   7. **Animal Type** - In addition to cats and dogs, there is an 'Other' category here in the third entry, corresponding to a 'Raccoon Mix' breed of animal. With the small amount of types of animals, this column is likely to perform better as categorical values.
-     
-   8. **Age upon Outcome** - If we are able to convert this into a uniform value (e.g. age in months) we can work with these values as numbers which will make analyzing this data easier. It should also be noted that if we work with the Outcome DateTime and Date of Birth columns as datetime objects, columns like this can be generated by arithmetic operations.
-     
-   9. **Breed** and **Color** - These columns look well-formatted, but more investigation is needed in order to determine whether they will perform better as categorical values, or what additional ways they can be transformed in order to yield more information.
-   
-### 2. Data Cleaning
-
-We will first start with by looking at the 'Name' column of the data. We can look at the entries with asterisks first.
-
-
-```python
-# Identify rows with names containing asterisks
-asterisks = data.Name.str.contains('\*').fillna(False)
-
-# Extract preview of rows with asterisks filter
-data[asterisks].head(10)
-```
-
-
-
-
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Animal ID</th>
-      <th>Name</th>
-      <th>DateTime</th>
-      <th>MonthYear</th>
-      <th>Date of Birth</th>
-      <th>Outcome Type</th>
-      <th>Outcome Subtype</th>
-      <th>Animal Type</th>
-      <th>Sex upon Outcome</th>
-      <th>Age upon Outcome</th>
-      <th>Breed</th>
-      <th>Color</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>A741715</td>
-      <td>*Pebbles</td>
-      <td>01/11/2017 06:17:00 PM</td>
-      <td>01/11/2017 06:17:00 PM</td>
-      <td>03/07/2016</td>
-      <td>Adoption</td>
-      <td>NaN</td>
-      <td>Cat</td>
-      <td>Spayed Female</td>
-      <td>10 months</td>
-      <td>Domestic Shorthair Mix</td>
-      <td>Calico</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>A675708</td>
-      <td>*Johnny</td>
-      <td>06/03/2014 02:20:00 PM</td>
-      <td>06/03/2014 02:20:00 PM</td>
-      <td>03/31/2013</td>
-      <td>Adoption</td>
-      <td>NaN</td>
-      <td>Dog</td>
-      <td>Neutered Male</td>
-      <td>1 year</td>
-      <td>Pit Bull</td>
-      <td>Blue/White</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>A664462</td>
-      <td>*Edgar</td>
-      <td>10/07/2013 01:06:00 PM</td>
-      <td>10/07/2013 01:06:00 PM</td>
-      <td>06/03/2013</td>
-      <td>Transfer</td>
-      <td>Partner</td>
-      <td>Dog</td>
-      <td>Intact Male</td>
-      <td>4 months</td>
-      <td>Leonberger Mix</td>
-      <td>Brown/White</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>A692618</td>
-      <td>*Ella</td>
-      <td>12/08/2014 03:55:00 PM</td>
-      <td>12/08/2014 03:55:00 PM</td>
-      <td>11/23/2011</td>
-      <td>Transfer</td>
-      <td>Partner</td>
-      <td>Dog</td>
-      <td>Spayed Female</td>
-      <td>3 years</td>
-      <td>Chihuahua Shorthair Mix</td>
-      <td>Brown</td>
-    </tr>
-    <tr>
-      <th>29</th>
-      <td>A678580</td>
-      <td>*Frida</td>
-      <td>06/29/2014 05:45:00 PM</td>
-      <td>06/29/2014 05:45:00 PM</td>
-      <td>03/26/2014</td>
-      <td>Adoption</td>
-      <td>Offsite</td>
-      <td>Cat</td>
-      <td>Spayed Female</td>
-      <td>3 months</td>
-      <td>Domestic Shorthair Mix</td>
-      <td>White/Black</td>
-    </tr>
-    <tr>
-      <th>31</th>
-      <td>A757005</td>
-      <td>*Sandi</td>
-      <td>10/07/2017 01:15:00 PM</td>
-      <td>10/07/2017 01:15:00 PM</td>
-      <td>07/28/2017</td>
-      <td>Adoption</td>
-      <td>Foster</td>
-      <td>Cat</td>
-      <td>Spayed Female</td>
-      <td>2 months</td>
-      <td>Domestic Shorthair Mix</td>
-      <td>Torbie/White</td>
-    </tr>
-    <tr>
-      <th>35</th>
-      <td>A720498</td>
-      <td>*Valentino</td>
-      <td>02/16/2016 12:00:00 AM</td>
-      <td>02/16/2016 12:00:00 AM</td>
-      <td>02/10/2014</td>
-      <td>Transfer</td>
-      <td>Partner</td>
-      <td>Dog</td>
-      <td>Neutered Male</td>
-      <td>2 years</td>
-      <td>Pug/Border Terrier</td>
-      <td>Black/Tan</td>
-    </tr>
-    <tr>
-      <th>37</th>
-      <td>A706392</td>
-      <td>*Ozzy</td>
-      <td>11/24/2015 11:58:00 AM</td>
-      <td>11/24/2015 11:58:00 AM</td>
-      <td>05/28/2015</td>
-      <td>Adoption</td>
-      <td>Foster</td>
-      <td>Cat</td>
-      <td>Neutered Male</td>
-      <td>5 months</td>
-      <td>Domestic Medium Hair Mix</td>
-      <td>Blue Tabby/White</td>
-    </tr>
-    <tr>
-      <th>50</th>
-      <td>A680396</td>
-      <td>*Truman</td>
-      <td>06/15/2014 03:11:00 PM</td>
-      <td>06/15/2014 03:11:00 PM</td>
-      <td>06/02/2012</td>
-      <td>Transfer</td>
-      <td>Partner</td>
-      <td>Dog</td>
-      <td>Neutered Male</td>
-      <td>2 years</td>
-      <td>Rat Terrier Mix</td>
-      <td>White/Black</td>
-    </tr>
-    <tr>
-      <th>52</th>
-      <td>A674298</td>
-      <td>*Newt</td>
-      <td>04/16/2014 12:51:00 PM</td>
-      <td>04/16/2014 12:51:00 PM</td>
-      <td>03/11/2013</td>
-      <td>Transfer</td>
-      <td>Partner</td>
-      <td>Dog</td>
-      <td>Neutered Male</td>
-      <td>1 year</td>
-      <td>Pit Bull Mix</td>
-      <td>Brown Brindle/White</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-From the data above, it looks like the Outcome Type for these entries is either adoption or transfer. This might give us more information, but we need to check further to verify if this is indeed the case.
-
-
-```python
-# Show outcome types for all animals with asterisk names
-data[asterisks]['Outcome Type'].unique()
-```
-
-
-
-
-    array(['Adoption', 'Transfer', 'Return to Owner', 'Euthanasia', 'Died',
-           'Missing', 'Rto-Adopt', nan, 'Disposal'], dtype=object)
-
-
-
-It looks like asterisk values are included in many different outcome types. For now the names column can be used as-is, and can be investigated in more detail. I have also contacted the owner of the dataset and will update if I get a response.
-
-Next up is the DateTime and MonthYear columns:
-
-
-```python
-# Check if all values in the DateTime and MonthYear columns are 
-(data.DateTime == data.MonthYear).value_counts()
-```
-
-
-
-
-    True    76133
-    dtype: int64
-
-
-
-Since these columns are identical, we can remove the MonthYear column for now.
-
-
-```python
-# Remove MonthYear columnn from the dataset
-data = data.drop('MonthYear', axis=1);
-```
-
-Now we can convert the 'DateTime' column into a datetime format. Since 'Date of Birth' needs this as well, we will perform this action on both columns.
-
-
-```python
-# Convert DateTime and Date of Birth into datetime format
-data['DateTime'] =  pd.to_datetime(data['DateTime'], format='%m/%d/%Y %I:%M:%S %p')
-data['Date of Birth'] = pd.to_datetime(data['Date of Birth'], format='%m/%d/%Y')
-```
-
-Next let's look at the outcome types and subtypes.
-
-
-```python
-# Display number of occurences of outcome types
-print('Outcome Types\n', data['Outcome Type'].value_counts())
-
-# Display number of occurences of outcome subtypes
-print('\nOutcome Subtypes\n', data['Outcome Subtype'].value_counts())
-```
-
-    Outcome Types
-     Adoption           32001
-    Transfer           23079
-    Return to Owner    13898
-    Euthanasia          5991
-    Died                 668
-    Disposal             303
-    Rto-Adopt            121
-    Missing               46
-    Relocate              16
-    Name: Outcome Type, dtype: int64
+    Dog Breeds with highest percentage of Homes Found
+                        Breed  % of Breed that Found Home
+    Rank                                                
+    1      Affenpinscher Mix                       100.0
+    2        Norfolk Terrier                       100.0
+    3               Boerboel                       100.0
+    4       Mexican Hairless                       100.0
+    5     Manchester Terrier                       100.0
+    6      Bouv Flandres Mix                       100.0
+    7          Silky Terrier                       100.0
+    8            Lowchen Mix                       100.0
+    9     Smooth Fox Terrier                       100.0
+    10            Leonberger                       100.0
     
-    Outcome Subtypes
-     Partner                19316
-    Foster                  5407
-    SCRP                    3211
-    Suffering               2477
-    Rabies Risk             2374
-    Snr                      542
-    Aggressive               505
-    Offsite                  363
-    In Kennel                338
-    Medical                  253
-    In Foster                177
-    Behavior                 142
-    At Vet                    57
-    Enroute                   44
-    Underage                  28
-    Court/Investigation       18
-    In Surgery                16
-    Possible Theft             9
-    Barn                       3
-    Name: Outcome Subtype, dtype: int64
+    Dog Breeds with lowest percentage of Homes Found
+                              Breed  % of Breed that Found Home
+    Rank                                                      
+    1          Spanish Mastiff Mix                         0.0
+    2                        Jindo                         0.0
+    3                     Landseer                         0.0
+    4                Japanese Chin                         0.0
+    5             Irish Setter Mix                         0.0
+    6            Dogue De Bordeaux                         0.0
+    7              Entlebucher Mix                         0.0
+    8              Sussex Span Mix                         0.0
+    9                Bruss Griffon                         0.0
+    10    Old English Sheepdog Mix                         0.0
     
 
-It seems that there are too many subtypes to integrate into our outcome types column, but it should still be advantageous to convert these columns into categorical values.
+The distribution for dogs similarly shows that exotic breeds seem to occupy many of the top ranking spots for adoption rates, although the wide variety of dog breeds also shows that there are many breeds that don't fare well. This might indicate that breed alone is not a good enough indication of the chances of adoption.
 
 
 ```python
-# Convert columns to categorical entries
-data['Outcome Type'] = pd.Categorical(data['Outcome Type'], ordered=False)
-data['Outcome Subtype'] = pd.Categorical(data['Outcome Subtype'], ordered=False)
-```
-
-Similarly, the 'Animal Type' and 'Sex upon Outcome' columns should be considered as categorical features
-
-
-```python
-# Display number of occurences of animal types
-print('Animal Types\n', data['Animal Type'].value_counts())
-
-# Display number of occurences of sex types
-print('\nSex upon Outcome\n', data['Sex upon Outcome'].value_counts())
-```
-
-    Animal Types
-     Dog          42885
-    Cat          28741
-    Other         4171
-    Bird           327
-    Livestock        9
-    Name: Animal Type, dtype: int64
-    
-    Sex upon Outcome
-     Neutered Male    26962
-    Spayed Female    24423
-    Intact Male       9318
-    Intact Female     8942
-    Unknown           6486
-    Name: Sex upon Outcome, dtype: int64
-    
-
-
-```python
-# Convert columns to categorical entries
-data['Animal Type'] = pd.Categorical(data['Animal Type'], ordered=False)
-data['Sex upon Outcome'] = pd.Categorical(data['Sex upon Outcome'], ordered=False)
-```
-
-As previously discussed, we can calculate the outcome age of any animal in the table (with a bit more granularity than we were provided) by converting this column into a timedelta format.
-
-
-```python
-# Replace age column with calculation from birthdate and outcome date
-data['Age upon Outcome'] = pd.to_timedelta(data['DateTime'] - data['Date of Birth'])
-```
-
-Next we consider the breed and color columns:
-
-
-```python
-# Display number of occurences of breeds
-print('Breeds\n', data['Breed'].value_counts())
-
-# Display number of occurences of animal colors
-print('\nColors\n', data['Color'].value_counts())
-```
-
-    Breeds
-     Domestic Shorthair Mix                            22807
-    Pit Bull Mix                                       5935
-    Chihuahua Shorthair Mix                            4592
-    Labrador Retriever Mix                             4447
-    Domestic Medium Hair Mix                           2254
-    German Shepherd Mix                                1840
-    Bat Mix                                            1264
-    Domestic Longhair Mix                              1198
-    Australian Cattle Dog Mix                          1030
-    Siamese Mix                                         983
-    Bat                                                 789
-    Dachshund Mix                                       784
-    Boxer Mix                                           650
-    Miniature Poodle Mix                                626
-    Border Collie Mix                                   623
-    Catahoula Mix                                       459
-    Raccoon Mix                                         453
-    Australian Shepherd Mix                             445
-    Rat Terrier Mix                                     440
-    Yorkshire Terrier Mix                               415
-    Siberian Husky Mix                                  405
-    Jack Russell Terrier Mix                            403
-    Miniature Schnauzer Mix                             380
-    Domestic Shorthair                                  379
-    Beagle Mix                                          368
-    Chihuahua Longhair Mix                              346
-    Staffordshire Mix                                   328
-    Great Pyrenees Mix                                  324
-    Pointer Mix                                         314
-    Cairn Terrier Mix                                   312
-                                                      ...  
-    Miniature Pinscher/Yorkshire Terrier                  1
-    Collie Rough/Pembroke Welsh Corgi                     1
-    French Bulldog/Pug                                    1
-    Collie Rough/Keeshond                                 1
-    Australian Shepherd/Brittany                          1
-    Anatol Shepherd/Siberian Husky                        1
-    German Shepherd/Beagle                                1
-    Cairn Terrier/Scottish Terrier                        1
-    Maltese/Dalmatian                                     1
-    Bruss Griffon/Yorkshire Terrier                       1
-    Bruss Griffon                                         1
-    Black Mouth Cur/Siberian Husky                        1
-    Harrier/German Shepherd                               1
-    Kuvasz/Labrador Retriever                             1
-    Chihuahua Shorthair/Shiba Inu                         1
-    German Shepherd/Redbone Hound                         1
-    Dachshund Wirehair/Pbgv                               1
-    Labrador Retriever/Bullmastiff                        1
-    Pomeranian/Jack Russell Terrier                       1
-    Rhod Ridgeback/Bullmastiff                            1
-    Vizsla/Rhod Ridgeback                                 1
-    Rat Terrier/Basenji                                   1
-    Rabbit Sh/Lop-Mini                                    1
-    Pembroke Welsh Corgi/Australian Cattle Dog            1
-    Staffordshire/French Bulldog                          1
-    Belgian Malinois/German Shepherd                      1
-    Dogue De Bordeaux/American Bulldog                    1
-    Ibizan Hound/Pit Bull                                 1
-    Chinese Sharpei/American Staffordshire Terrier        1
-    Australian Shepherd/Feist                             1
-    Name: Breed, Length: 2101, dtype: int64
-    
-    Colors
-     Black/White                    7929
-    Black                          6424
-    Brown Tabby                    4342
-    Brown                          3395
-    White                          2698
-    Brown/White                    2350
-    Tan/White                      2315
-    Brown Tabby/White              2276
-    Orange Tabby                   2142
-    White/Black                    2037
-    Blue/White                     2028
-    Tricolor                       1949
-    Tan                            1902
-    Black/Tan                      1796
-    White/Brown                    1523
-    Black/Brown                    1475
-    Calico                         1321
-    Brown Brindle/White            1316
-    Tortie                         1312
-    Blue                           1299
-    Brown/Black                    1287
-    White/Tan                      1123
-    Blue Tabby                     1113
-    Orange Tabby/White             1072
-    Red                            1013
-    Red/White                       842
-    Torbie                          825
-    Brown Brindle                   691
-    Tan/Black                       584
-    Chocolate/White                 581
-                                   ... 
-    Chocolate/Yellow                  1
-    Tricolor/Gray                     1
-    Black/Seal Point                  1
-    Tan/Apricot                       1
-    Orange Tabby/Tortie Point         1
-    Black Tabby/Gray Tabby            1
-    Tortie Point/Lynx Point           1
-    Gold/Buff                         1
-    Red Merle/Brown Merle             1
-    Tricolor/Tricolor                 1
-    Brown/Apricot                     1
-    Black Brindle/Blue                1
-    Seal Point/Buff                   1
-    Chocolate/Liver Tick              1
-    Chocolate/Gray                    1
-    Torbie/Silver Tabby               1
-    Cream/Blue Point                  1
-    Black Tiger                       1
-    Brown Tabby/Black Brindle         1
-    Black Smoke/Blue Tick             1
-    Blue Tick/Brown Brindle           1
-    Blue Cream/Blue Tiger             1
-    Brown Brindle/Blue Cream          1
-    Red/Gold                          1
-    Cream/Cream                       1
-    Blue Smoke/Gray                   1
-    Black Brindle/Brown Brindle       1
-    Chocolate/Red Tick                1
-    Red Tick/Brown Merle              1
-    Gray/Buff                         1
-    Name: Color, Length: 519, dtype: int64
-    
-
-We can see that the list of breeds and colors are very long and many categories only have one entry. There are a few options to take here. First, for breeds, we can cut down the number of entries by reducing the number of mixed breed entries of the format 'breed/breed'.
-
-
-```python
-# Print the number of distinct breeds found in the data
-print('# of unique breeds in the original dataset: {0}'.format(len(data['Breed'].unique())))
-
-# Print the number of mixed breeds with the format 'breed/breed'
-print('# of mixed breeds classified by "breed/breed": {0}'.format(len(data[data['Breed'].str.contains('/')]['Breed'].unique())))
-
-# Iterate over the list to find and replace all mixed breeds with 'first_breed/second_breed' to format 'first_breed Mix'
-mixed_breeds = []
-
-for breed in data['Breed']:
-    if '/' in breed:
-        mixed_breeds.append(breed.split('/')[0] + ' Mix')
-    else:
-        mixed_breeds.append(breed)
-
-# Check to see whether the result is of appropriate length
-assert len(mixed_breeds) == len(data['Breed'])        
-
-# Replace 'Breed' data with reduced category set
-data['Breed'] = pd.Series(mixed_breeds)
-
-# Display the number of distinct breeds after replacement
-print('# of unique breeds after replacement: {0}'.format(len(data['Breed'].unique())))
-```
-
-    # of unique breeds in the original dataset: 2101
-    # of mixed breeds classified by "breed/breed": 1557
-    # of unique breeds after replacement: 547
-    
-
-Now we have significantly reduced the number of breed categories in the dataset. For the 'Color' categories, we may lose some important information that can be useful. For example, do white and orange cats get adopted more often than white and black cats? In order to keep as much information as possible, but provide some simpler avenues for analysis I will split the 'Color' column into 'Primary Color' and 'Secondary Color' values for the animals.
-
-
-```python
-# Print the number of distinct colors found in the dataset
-print('# of unique colors in the original dataset: {0}'.format(len(data['Color'].unique())))
-
-# Print the number of mixed breeds with the format 'color/color'
-print('# of mixed colors classified by "color/color": {0}'.format(len(data[data['Color'].str.contains('/')]['Color'].unique())))
-
-# Iterate over the list to find and replace all mixed breeds with 'first_breed/second_breed' to format 'first_breed Mix'
-primary_colors = []
-secondary_colors = []
-
-for color in data['Color']:
-    if '/' in color:
-        primary_colors.append(color.split('/')[0])
-        secondary_colors.append(color.split('/')[1])
-    else:
-        primary_colors.append(color)
-        secondary_colors.append(None)
-
-# Check to see whether the result is of appropriate length
-assert len(primary_colors) == len(data['Color'])
-assert len(secondary_colors) == len(data['Color'])
-
-# Replace 'Color' with 'Primary Color' and 'Secondary Color' data
-data = data.drop('Color', axis=1)
-data['Primary Color'] = pd.Series(primary_colors)
-data['Secondary Color'] = pd.Series(secondary_colors)
-
-# Display the number of distinct colors after replacement
-print('# of unique colors after replacement: {0}'.format(len(pd.Series(primary_colors).unique())))
-print('# of unique colors after replacement: {0}'.format(len(pd.Series(secondary_colors).unique())))
-```
-
-    # of unique colors in the original dataset: 519
-    # of mixed colors classified by "color/color": 462
-    # of unique colors after replacement: 58
-    # of unique colors after replacement: 52
-    
-
-Now the number of color categories has been reduced to about 10% of its original number. Now we can re-check the values for these categories.
-
-
-```python
-# Display number of occurences of breeds
-print('Breeds\n', data['Breed'].value_counts())
-
-# Display number of occurences of animal colors
-print('\nPrimary Colors\n', data['Primary Color'].value_counts())
-```
-
-    Breeds
-     Domestic Shorthair Mix              22815
-    Pit Bull Mix                         6294
-    Labrador Retriever Mix               5632
-    Chihuahua Shorthair Mix              5267
-    Domestic Medium Hair Mix             2259
-    German Shepherd Mix                  2241
-    Australian Cattle Dog Mix            1281
-    Bat Mix                              1264
-    Domestic Longhair Mix                1205
-    Dachshund Mix                        1095
-    Siamese Mix                          1000
-    Border Collie Mix                     827
-    Boxer Mix                             821
-    Bat                                   789
-    Miniature Poodle Mix                  744
-    Catahoula Mix                         581
-    Australian Shepherd Mix               549
-    Jack Russell Terrier Mix              544
-    Yorkshire Terrier Mix                 531
-    Rat Terrier Mix                       529
-    Beagle Mix                            527
-    Miniature Schnauzer Mix               503
-    Siberian Husky Mix                    486
-    Raccoon Mix                           453
-    Great Pyrenees Mix                    433
-    Pointer Mix                           409
-    Chihuahua Longhair Mix                400
-    Domestic Shorthair                    379
-    Cairn Terrier Mix                     376
-    Rottweiler Mix                        366
-                                        ...  
-    Rabbit Lh                               1
-    Bruss Griffon                           1
-    Ocicat Mix                              1
-    Landseer                                1
-    Chinchilla-Amer Mix                     1
-    Bunting                                 1
-    Tortoise                                1
-    Ringtail Mix                            1
-    Lovebird Mix                            1
-    Guinea Mix                              1
-    Manchester Terrier                      1
-    Norwich Terrier                         1
-    Greater Swiss Mountain Dog              1
-    Angora-French Mix                       1
-    Mouse Mix                               1
-    Silver Mix                              1
-    Entlebucher Mix                         1
-    Conure Mix                              1
-    Boerboel                                1
-    Dogue De Bordeaux                       1
-    Barred Rock Mix                         1
-    Potbelly Pig Mix                        1
-    Frog                                    1
-    English Spot                            1
-    Grand Basset Griffon Vendeen Mix        1
-    Treeing Tennesse Brindle Mix            1
-    Eng Toy Spaniel Mix                     1
-    Lark Mix                                1
-    Bobcat Mix                              1
-    Old English Sheepdog Mix                1
-    Name: Breed, Length: 547, dtype: int64
-    
-    Primary Colors
-     Black                18434
-    White                 9615
-    Brown                 7435
-    Brown Tabby           6690
-    Tan                   5057
-    Blue                  3466
-    Orange Tabby          3228
-    Red                   2189
-    Tricolor              2062
-    Brown Brindle         2056
-    Blue Tabby            1659
-    Tortie                1424
-    Calico                1421
-    Gray                  1232
-    Chocolate             1196
-    Torbie                1012
-    Sable                  775
-    Cream Tabby            724
-    Cream                  654
-    Yellow                 648
-    Fawn                   565
-    Buff                   534
-    Lynx Point             478
-    Blue Merle             382
-    Seal Point             373
-    Black Brindle          270
-    Black Tabby            234
-    Gray Tabby             207
-    Flame Point            201
-    Gold                   179
-    Brown Merle            166
-    Orange                 148
-    Black Smoke            148
-    Blue Tick              120
-    Silver                 114
-    Red Merle              108
-    Red Tick               104
-    Silver Tabby            89
-    Lilac Point             84
-    Yellow Brindle          78
-    Tortie Point            77
-    Apricot                 65
-    Blue Point              61
-    Chocolate Point         60
-    Calico Point            54
-    Blue Cream              44
-    Green                   41
-    Liver                   37
-    Blue Tiger              32
-    Pink                    30
-    Brown Tiger             16
-    Agouti                  16
-    Blue Smoke              15
-    Silver Lynx Point       14
-    Liver Tick               7
-    Black Tiger              3
-    Ruddy                    1
-    Orange Tiger             1
-    Name: Primary Color, dtype: int64
-    
-
-And finally we set these columns as categorical variables.
-
-
-```python
-# Convert columns to categorical entries
-data['Breed'] = pd.Categorical(data['Breed'], ordered=False)
-data['Primary Color'] = pd.Categorical(data['Primary Color'], ordered=False)
-data['Secondary Color'] = pd.Categorical(data['Secondary Color'], ordered=False)
-```
-
-Now that we have applied some formatting to each column, we can revisit the dataset information to get a summary of our results.
-
-
-```python
-# Display number of entries and features in the formatted dataset
-print('# of entries in this dataset: {0}'.format(data.shape[0]))
-print('# of features per entry: {0}\n'.format(data.shape[1])) 
-
-# Display formatted dataset information
-data.info()
-```
-
-    # of entries in this dataset: 76133
-    # of features per entry: 12
-    
-    <class 'pandas.core.frame.DataFrame'>
-    RangeIndex: 76133 entries, 0 to 76132
-    Data columns (total 12 columns):
-    Animal ID           76133 non-null object
-    Name                52741 non-null object
-    DateTime            76133 non-null datetime64[ns]
-    Date of Birth       76133 non-null datetime64[ns]
-    Outcome Type        76123 non-null category
-    Outcome Subtype     35280 non-null category
-    Animal Type         76133 non-null category
-    Sex upon Outcome    76131 non-null category
-    Age upon Outcome    76133 non-null timedelta64[ns]
-    Breed               76133 non-null category
-    Primary Color       76133 non-null category
-    Secondary Color     39720 non-null category
-    dtypes: category(7), datetime64[ns](2), object(2), timedelta64[ns](1)
-    memory usage: 3.5+ MB
-    
-
-Not only is the data better formatted for analysis, but it also occupies less memory than before. After replacements, we ended up with the same number of features as before, though these features have a richer set of data for analysis.
-
-### 3. Missing Values
-
-Below are the columns with missing data:
-
-
-```python
-# Identify columns with any missing values
-NA_columns = data.columns[data.isnull().any()]
-
-# Count missing entries in each column
-NA_data_counts = data.isnull().sum()[NA_columns]
-
-# Display columns and counts of missing entries
-pd.DataFrame(data = NA_data_counts, columns = ['# of missing entries'])
-```
-
-
-
-
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th># of missing entries</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Name</th>
-      <td>23392</td>
-    </tr>
-    <tr>
-      <th>Outcome Type</th>
-      <td>10</td>
-    </tr>
-    <tr>
-      <th>Outcome Subtype</th>
-      <td>40853</td>
-    </tr>
-    <tr>
-      <th>Sex upon Outcome</th>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>Secondary Color</th>
-      <td>36413</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-We can see that out of the 5 columns that contain missing entries, 'Outcome Subtype' and 'Secondary Color' have empty entries by necessity, since some outcome types do not have subclasses, and some animals do not have secondary colors. In addition, names may not be crucial to the other animal attributes, but it is crucial to keep records of animals with and without given names, since this fact may also influence the outcome type for that animal.
-
-What is left are a handful of entries without outcome type, which is critical information that we are interested in, and without sex information. Since we are currently working with a dataset of more than 76,000 entries, we can remove these entries without any significant impact on our data.
-
-
-```python
-# Remove entries from columns with missing data for either Outcome Type or Sex
-data = data.dropna(subset=['Outcome Type', 'Sex upon Outcome'])
-
-# Display columns and counts of missing entries
-NA_columns = data.columns[data.isnull().any()]
-NA_data_counts = data.isnull().sum()[NA_columns]
-pd.DataFrame(data = NA_data_counts, columns = ['# of missing entries'])
-```
-
-
-
-
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th># of missing entries</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Name</th>
-      <td>23386</td>
-    </tr>
-    <tr>
-      <th>Outcome Subtype</th>
-      <td>40842</td>
-    </tr>
-    <tr>
-      <th>Secondary Color</th>
-      <td>36405</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-### 4. Outliers
-
-Although many outliers were corrected with the previous formatting, there are a few columns of interest in particular that I will address here, namely 'Animal Type', 'Outcome Type' and 'Outcome Subtype'.
-
-First is Animal Type:
-
-
-```python
-# Create a pie chart showing distribution of animal types
-plt.figure(figsize=(8, 8))
-data['Animal Type'].value_counts().plot(kind='pie',
-                                        title='Distribution of Animal Types',
-                                        labels=None,
-                                        legend='Best'
-                                       )
-plt.axis('Equal')
+# Cat Breed vs. Mixed
+mixed_cats = cats[cats['Breed'].str.contains('Mix')]['Found Home']
+pure_cats = cats[~cats['Breed'].str.contains('Mix')]['Found Home']
+
+pure_cats_fh = 100*(pure_cats == 1).sum()/pure_cats.shape[0]
+mixed_cats_fh = 100*(mixed_cats == 1).sum()/mixed_cats.shape[0]
+
+# Dog Breed vs. Mixed
+mixed_dogs = dogs[dogs['Breed'].str.contains('Mix')]['Found Home']
+pure_dogs = dogs[~dogs['Breed'].str.contains('Mix')]['Found Home']
+
+pure_dogs_fh = 100*(pure_dogs == 1).sum()/pure_dogs.shape[0]
+mixed_dogs_fh = 100*(mixed_dogs == 1).sum()/mixed_dogs.shape[0]
+
+# Generate plot
+fig, ax = plt.subplots(figsize=(8,8))
+ax.bar(list(range(4)), 
+        np.array([pure_cats_fh, mixed_cats_fh, pure_dogs_fh, mixed_dogs_fh]), 
+        color=['purple','mediumorchid','green','lightgreen'], 
+        edgecolor='k'
+       )
+ax.set_title('Percentage of Homes Found vs. Pure and Mixed Breeds')
+ax.set_xticks(list(range(4)))
+ax.set_xticklabels(('Purebreed Cats', 'Mixed Cats', 'Purebreed Dogs', 'Mixed Dogs'))
+plt.ylabel('% of Animals that Found a Home')
+
+# Draw a line at 50%
+plt.axhline(y=50, color='r', linestyle='--')
 
 # Display plot
 plt.show()
 ```
 
 
-![png](images/output_46_0.png)
+![png](output_26_0.png)
 
 
-There are mostly cats and dogs in this data, with the remaining animals of Bird, Livestock and Other types. We can look at these categories in more detail to see what kind of outcome data they contain:
+We can see that there are two opposing trends for cats and dogs here. For cats, purebreeds have a noticeably higher rate of adoption, while dogs see a drop in adoption rates for those that are not mixed breeds. This may be related to the high occurences of Domestic Shorthair cats at the center. When people come in to browse for pet adoption, it is easier for purebreeds to stand out in appearance when most cats are similar. The distribution of breeds for dogs are much more varied, and so this may not have the same impact on adoptions for dogs.
+
+#### iv. Colors
 
 
 ```python
-# Create a pie chart showing distribution of bird outcomes
-plt.figure(figsize=(8, 8))
-data[data['Animal Type'] == 'Bird']['Outcome Type'].value_counts()[:8].plot(kind='pie',
-                                        title='Distribution of Bird Outcomes',
-                                        labels=None,
-                                        legend='Best'
-                                       )
-plt.axis('Equal')
+# Most Common Colors
+plt.subplots(figsize=(14, 8))
 
-# Create a pie chart showing distribution of livestock outcomes
-plt.figure(figsize=(8, 8))
-data[data['Animal Type'] == 'Livestock']['Outcome Type'].value_counts()[:3].plot(kind='pie',
-                                        title='Distribution of Livestock Outcomes',
-                                        labels=None,
-                                        legend='Best'
-                                       )
-plt.axis('Equal')
+# Create plot to show distribution of most common cat colors by percent of total cats
+plt.subplot(1, 2, 1)
+cat_colors=['brown', 'black', 'orange', 'lightsteelblue', 'white', 'lightsteelblue', 'saddlebrown', 'sandybrown', 'saddlebrown', 'wheat']
+(100*cats['Primary Color'].value_counts()[:10]/cats['Primary Color'].value_counts().sum()).plot(kind='bar', color=[cat_colors], edgecolor='k')
+plt.ylabel('% of Total Cats')
+plt.xlabel('Primary Color')
+plt.title('Distribution of 10 Most Common Cat Colors')
 
-# Create a pie chart showing distribution of 'other' outcomes
-plt.figure(figsize=(8, 8))
-data[data['Animal Type'] == 'Other']['Outcome Type'].value_counts()[:7].plot(kind='pie',
-                                        title='Distribution of Other Outcomes',
-                                        labels=None,
-                                        legend='Best'
-                                       )
-plt.axis('Equal')
+# Create plot to show distribution of most common dog colors by percent of total dogs
+plt.subplot(1, 2, 2)
+dog_colors=['black', 'white', 'brown', 'tan', 'saddlebrown', 'maroon', 'saddlebrown', 'lightsteelblue', 'chocolate', 'black']
+(100*dogs['Primary Color'].value_counts()[:10]/dogs['Primary Color'].value_counts().sum()).plot(kind='bar', color=[dog_colors], edgecolor='k')
+plt.ylabel('% of Total Dogs')
+plt.xlabel('Primary Color')
+plt.title('Distribution of 10 Most Common Dog Colors')
+
+plt.show()
+```
+
+
+![png](output_28_0.png)
+
+
+Above are the 10 most common colors for both cats and dogs. If we investigate the rates of placement in permanent homes by color, it may be possible to extract information on which color animals are preferred by people looking for pets at the Austin Animal Center.
+
+
+```python
+## Find percentage of cats that found homes by primary color
+cat_colors_fh = {}
+for color in cats['Primary Color'].unique():
+    fh_temp = cats.loc[(cats['Found Home'] == 1) & (cats['Primary Color'] == color)].shape[0]
+    total_temp = cats.loc[cats['Primary Color'] == color].shape[0]
+    cat_colors_fh[color] = fh_temp/total_temp
+
+# Create ranking lists
+top10_cat_colors_fh = pd.Series(cat_colors_fh).sort_values(ascending=False)[:10]
+bottom10_cat_colors_fh = pd.Series(cat_colors_fh).sort_values()[:10]
+
+# Format dataframe for display
+top10_cat_colors_fh2 = pd.DataFrame(data={'Primary Color': top10_cat_colors_fh.index,
+                                          '% of Color that Found Home': 100*top10_cat_colors_fh.values
+                                         },
+                                    columns=['Primary Color', '% of Color that Found Home'],
+                                    index=range(1,11)
+                                   )
+
+bottom10_cat_colors_fh2 = pd.DataFrame(data={'Primary Color': bottom10_cat_colors_fh.index,
+                                          '% of Color that Found Home': 100*bottom10_cat_colors_fh.values
+                                         },
+                                    columns=['Primary Color', '% of Color that Found Home'],
+                                    index=range(1,11)
+                                   )
+
+# Rename index to ranking
+top10_cat_colors_fh2.index.name = 'Rank'
+bottom10_cat_colors_fh2.index.name = 'Rank'
+
+
+# Display Rankings
+print('Cat Colors with Highest percentage of Homes Found\n', top10_cat_colors_fh2)
+print('\nCat Colors with Lowest percentage of Homes Found\n', bottom10_cat_colors_fh2)
+```
+
+    Cat Colors with Highest percentage of Homes Found
+             Primary Color  % of Color that Found Home
+    Rank                                             
+    1                Fawn                  100.000000
+    2             Apricot                  100.000000
+    3          Blue Smoke                   91.666667
+    4              Agouti                   66.666667
+    5        Tortie Point                   63.636364
+    6         Black Smoke                   62.878788
+    7     Chocolate Point                   61.016949
+    8         Flame Point                   58.208955
+    9           Chocolate                   57.692308
+    10         Lynx Point                   55.230126
+    
+    Cat Colors with Lowest percentage of Homes Found
+           Primary Color  % of Color that Found Home
+    Rank                                           
+    1          Tricolor                    0.000000
+    2              Pink                    0.000000
+    3     Black Brindle                    0.000000
+    4      Orange Tiger                    0.000000
+    5       Black Tiger                    0.000000
+    6       Brown Merle                    0.000000
+    7     Brown Brindle                    0.000000
+    8              Buff                    9.090909
+    9            Orange                   22.807018
+    10       Gray Tabby                   25.603865
+    
+
+
+```python
+# Find rankings of likelihood to find home for 10 most common colors
+cat_color_fh_rankings = pd.Series(cat_colors_fh).sort_values(ascending=False)
+
+print('Rankings of Colors Most Likely to Find Homes - for 10 Most Common Cat Colors')
+for i in range(len(cat_color_fh_rankings)):
+    if cat_color_fh_rankings.index[i] in cats['Primary Color'].value_counts().index[:10]:
+        print('{0}: {1}'.format(cat_color_fh_rankings.index[i], i+1))
+```
+
+    Rankings of Colors Most Likely to Find Homes - for 10 Most Common Cat Colors
+    Torbie: 11
+    Calico: 15
+    Cream Tabby: 16
+    Blue Tabby: 17
+    Blue: 22
+    Tortie: 23
+    Orange Tabby: 25
+    Brown Tabby: 27
+    White: 28
+    Black: 29
+    
+
+
+```python
+# Find percentage of dogs that found homes by primary color
+dog_colors_fh = {}
+for color in dogs['Primary Color'].unique():
+    fh_temp = dogs.loc[(dogs['Found Home'] == 1) & (dogs['Primary Color'] == color)].shape[0]
+    total_temp = dogs.loc[dogs['Primary Color'] == color].shape[0]
+    dog_colors_fh[color] = fh_temp/total_temp
+
+# Create ranking lists
+top10_dog_colors_fh = pd.Series(dog_colors_fh).sort_values(ascending=False)[:10]
+bottom10_dog_colors_fh = pd.Series(dog_colors_fh).sort_values()[:10]
+
+# Format dataframe for display
+top10_dog_colors_fh2 = pd.DataFrame(data={'Primary Color': top10_dog_colors_fh.index,
+                                          '% of Color that Found Home': 100*top10_dog_colors_fh.values
+                                         },
+                                    columns=['Primary Color', '% of Color that Found Home'],
+                                    index=range(1,11)
+                                   )
+
+bottom10_dog_colors_fh2 = pd.DataFrame(data={'Primary Color': bottom10_dog_colors_fh.index,
+                                          '% of Color that Found Home': 100*bottom10_dog_colors_fh.values
+                                         },
+                                    columns=['Primary Color', '% of Color that Found Home'],
+                                    index=range(1,11)
+                                   )
+
+# Rename index to ranking
+top10_dog_colors_fh2.index.name = 'Rank'
+bottom10_dog_colors_fh2.index.name = 'Rank'
+
+
+# Display Rankings
+print('Dog Colors with Highest percentage of Homes Found\n', top10_dog_colors_fh2)
+print('\nDog Colors with Lowest percentage of Homes Found\n', bottom10_dog_colors_fh2)
+```
+
+    Dog Colors with Highest percentage of Homes Found
+            Primary Color  % of Color that Found Home
+    Rank                                            
+    1             Agouti                  100.000000
+    2              Ruddy                  100.000000
+    3        Black Tiger                  100.000000
+    4        Black Smoke                   92.307692
+    5         Blue Tiger                   90.625000
+    6     Yellow Brindle                   81.578947
+    7         Blue Merle                   80.890052
+    8             Silver                   80.373832
+    9        Brown Merle                   80.368098
+    10            Yellow                   78.360656
+    
+    Dog Colors with Lowest percentage of Homes Found
+          Primary Color  % of Color that Found Home
+    Rank                                          
+    1      Brown Tiger                   60.000000
+    2           Orange                   66.666667
+    3       Blue Smoke                   66.666667
+    4             Gold                   71.022727
+    5       Liver Tick                   71.428571
+    6       Blue Cream                   71.428571
+    7            Cream                   71.698113
+    8          Apricot                   71.875000
+    9             Gray                   71.922246
+    10            Fawn                   72.759857
+    
+
+
+```python
+# Find rankings of likelihood to find home for 10 most common colors
+dog_color_fh_rankings = pd.Series(dog_colors_fh).sort_values(ascending=False)
+
+print('Rankings of Colors Most Likely to Find Homes - for 10 Most Common Dog Colors')
+for i in range(len(dog_color_fh_rankings)):
+    if dog_color_fh_rankings.index[i] in dogs['Primary Color'].value_counts().index[:10]:
+        print('{0}: {1}'.format(dog_color_fh_rankings.index[i], i+1))
+```
+
+    Rankings of Colors Most Likely to Find Homes - for 10 Most Common Dog Colors
+    Chocolate: 14
+    Tricolor: 15
+    Blue: 17
+    Red: 19
+    Black: 20
+    Brown Brindle: 21
+    Tan: 22
+    Sable: 24
+    Brown: 25
+    White: 26
+    
+
+
+```python
+plt.subplots(figsize=(14, 8))
+
+# Create plot to show distribution of most common cat colors by percent of total cats
+plt.subplot(1, 2, 1)
+cat_colors=['brown', 'black', 'orange', 'lightsteelblue', 'white', 'lightsteelblue', 'saddlebrown', 'sandybrown', 'saddlebrown', 'wheat']
+ax1 = (100*cats['Primary Color'].value_counts()[:10]/cats['Primary Color'].value_counts().sum()).plot(kind='bar', color=[cat_colors], edgecolor='k')
+plt.ylabel('% of Total Cats')
+plt.xlabel('Primary Color')
+plt.title('Distribution of 10 Most Common Cat Colors')
+
+# Label bars with ranking of cats most likely to find homes
+rects = ax1.patches
+labels1 = ['27th', '29th', '25th', '22nd', '28th', '17th', '23rd', '15th', '11th', '16th']
+
+for rect, label in zip(rects, labels1):
+    height = rect.get_height()
+    ax1.text(rect.get_x() + rect.get_width()/2, height*1.01, label, ha='center', va='bottom')
+    
+# Create plot to show distribution of most common dog colors by percent of total dogs
+plt.subplot(1, 2, 2)
+dog_colors=['black', 'white', 'brown', 'tan', 'saddlebrown', 'maroon', 'saddlebrown', 'lightsteelblue', 'chocolate', 'black']
+ax2 = (100*dogs['Primary Color'].value_counts()[:10]/dogs['Primary Color'].value_counts().sum()).plot(kind='bar', color=[dog_colors], edgecolor='k')
+plt.ylabel('% of Total Dogs')
+plt.xlabel('Primary Color')
+plt.title('Distribution of 10 Most Common Dog Colors')
+
+# Label bars with ranking of dogs most likely to find homes
+rects = ax2.patches
+labels2 = ['20th', '26th', '25th', '22nd', '21st', '19th', '15th', '17th', '14th', '24th']
+
+for rect, label in zip(rects, labels2):
+    height = rect.get_height()
+    ax2.text(rect.get_x() + rect.get_width()/2, height*1.01, label, ha='center', va='bottom')
+    
+plt.show()
+```
+
+
+![png](output_34_0.png)
+
+
+The respective ranks in highest adoption rates for cats and dogs are denoted above the bars for each of the 10 most common colors. We can see again that none of the most common colors for both cats and dogs appear in their respective top lists of adoption rates. This further supports that a sense of exotic appearance of a pet may be a primary driver in people's choice of a pet.
+
+
+```python
+# % of Homes Found vs. cats with secondary colors
+cats_secondary = cats[cats['Secondary Color'].notnull()]
+cats_no_secondary = cats[~cats['Secondary Color'].notnull()]
+
+cats_secondary_fh = 100*(cats_secondary['Found Home'] == 1).sum()/cats_secondary.shape[0]
+cats_no_secondary_fh = 100*(cats_no_secondary['Found Home'] == 1).sum()/cats_no_secondary.shape[0]
+
+# % of Homes Found vs. dogs with secondary colors
+dogs_secondary = dogs[dogs['Secondary Color'].notnull()]
+dogs_no_secondary = dogs[~dogs['Secondary Color'].notnull()]
+
+dogs_secondary_fh = 100*(dogs_secondary['Found Home'] == 1).sum()/dogs_secondary.shape[0]
+dogs_no_secondary_fh = 100*(dogs_no_secondary['Found Home'] == 1).sum()/dogs_no_secondary.shape[0]
+
+
+# Generate plot
+fig, ax = plt.subplots(figsize=(12,8))
+ax.bar(list(range(4)),
+       np.array([cats_secondary_fh, cats_no_secondary_fh, dogs_secondary_fh, dogs_no_secondary_fh]),
+       color=['darkgoldenrod','gold','royalblue','lightsteelblue'],
+       width=0.5,
+       edgecolor='k'
+       )
+ax.set_title('Percentage of Homes Found vs. Animals with Secondary Colors')
+ax.set_xticks(list(range(4)))
+ax.set_xticklabels(('Cats: w/ Secondary', 'Cats: No Secondary', 'Dogs: w/ Secondary', 'Dogs: No Secondary'))
+plt.ylabel('% of Animals that Found a Home')
+
+# Draw a line at 50%
+plt.axhline(y=50, color='r', linestyle='--')
 
 # Display plot
 plt.show()
 ```
 
 
-![png](images/output_48_0.png)
+![png](output_36_0.png)
 
 
+The data above shows that for both cats and dogs, a secondary color slightly improves the rates of adoption. Animals with distinctive color combinations in their coats may stand out more visually to potential pet owners.
 
-![png](images/output_48_1.png)
+### 3. Analysis of Adoption Outcomes vs. Year
 
-
-
-![png](images/output_48_2.png)
-
-
-Although there is a much smaller number of entries for these categories, we can see that they each have a good distribution of outcomes, and so for now it will be best to keep these entries in the data for consideration.
-
-Next we will look at Outcome types:
+Finally, I will take a brief look at the trends of cat and dog adoptions by year. 
 
 
 ```python
-# Display occurences of outcome types
-print('Outcome Types\n', data['Outcome Type'].value_counts())
+print('The dataset covers a time period between {0} and {1}'.format(data['DateTime'].min(), data['DateTime'].max()))
+```
 
-# Create a pie chart showing distribution of outcome subtypes for missing animals
-plt.figure(figsize=(8, 8))
-data[data['Outcome Type'] == 'Missing']['Outcome Subtype'].value_counts()[:3].plot(kind='pie',
-                                        title='Distribution of Missing Animal Outcomes',
-                                        labels=None,
-                                        legend='Best'
-                                       )
+    The dataset covers a time period between 2013-10-01 09:31:00 and 2017-12-10 12:59:00
+    
+
+[[Explain that I will be looking at statistics for 2014-2017]]
+
+
+```python
+# Reset indices for cats and dogs
+cats.reset_index(drop=True, inplace=True)
+dogs.reset_index(drop=True, inplace=True)
+
+
+# Separate data into years and months
+cat_years = []
+cat_months = []
+
+for cat in cats['DateTime']:
+    cat_years.append(cat.year)
+    cat_months.append(cat.month)
+    
+dog_years = []
+dog_months = []
+
+for dog in dogs['DateTime']:
+    dog_years.append(dog.year)
+    dog_months.append(dog.month)
+    
+# Convert collected months and years into Series format
+cat_years = pd.Series(cat_years)
+cat_months = pd.Series(cat_months)
+dog_years = pd.Series(dog_years)
+dog_months = pd.Series(dog_months)
+```
+
+
+```python
+# cat outcomes vs. year
+cat_year_fh = []
+
+for year in range(2013,2018):
+    cat_year = 100*(cats[cat_years == year]['Found Home'] == 1).sum()/(cats[cat_years == year].shape[0])
+    cat_year_fh.append(cat_year)
+
+# dog outcomes vs. year
+dog_year_fh = []
+
+for year in range(2013,2018):
+    dog_year = 100*(dogs[dog_years == year]['Found Home'] == 1).sum()/(dogs[dog_years == year].shape[0])
+    dog_year_fh.append(dog_year)
+```
+
+
+```python
+# Construct plots to show percentage trends of cats and dogs that found homes by year
+plt.plot(range(2013,2018), list(cat_year_fh), 'k-')
+plt.plot(range(2013,2018), list(cat_year_fh), 'ro')
+
+plt.plot(range(2013,2018), list(dog_year_fh), 'k-')
+plt.plot(range(2013,2018), list(dog_year_fh), 'bo')
+
+# Plot formatting
+plt.xlabel('Year')
+plt.ylabel('% of Entries with Home Found')
+
+# Create a legend for plot
+cat_patch = mpatches.Patch(facecolor=(1, 0, 0), edgecolor='k', label='Cats')
+dog_patch = mpatches.Patch(facecolor=(0, 0, 1), edgecolor='k', label='Dogs')
+plt.legend(handles=[dog_patch, cat_patch])
+
+
 # Display plot
 plt.show()
 ```
 
-    Outcome Types
-     Adoption           32001
-    Transfer           23079
-    Return to Owner    13897
-    Euthanasia          5991
-    Died                 668
-    Disposal             303
-    Rto-Adopt            121
-    Missing               46
-    Relocate              16
-    Name: Outcome Type, dtype: int64
-    
+
+![png](output_43_0.png)
 
 
-![png](output_50_1.png)
-
+The graph above shows the average rates of placement in permanent homes for cats and dogs broken down by year. Although dogs have experienced a relative upward trend with time, cats seem to show a drop in rates from 2013 to 2014, but then the same relative upward trend. This may be an anomaly of our dataset, since we only have 2013 data for the months of October-December. If there is a dependence on adoptions vs. months of the year, this can introduce a bias into the 2013 data points.
 
 
 ```python
-data[data['Outcome Type'] == 'Relocate'].head(10)
+# cat outcomes vs. year
+cat_month_fh = []
+
+for month in range(1,13):
+    cat_month = 100*(cats[cat_months == month]['Found Home'] == 1).sum()/(cats[cat_months == month].shape[0])
+    cat_month_fh.append(cat_month)
+
+# dog outcomes vs. year
+dog_month_fh = []
+
+for month in range(1,13):
+    dog_month = 100*(dogs[dog_months == month]['Found Home'] == 1).sum()/(dogs[dog_months == month].shape[0])
+    dog_month_fh.append(dog_month)
 ```
-
-
-
-
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Animal ID</th>
-      <th>Name</th>
-      <th>DateTime</th>
-      <th>Date of Birth</th>
-      <th>Outcome Type</th>
-      <th>Outcome Subtype</th>
-      <th>Animal Type</th>
-      <th>Sex upon Outcome</th>
-      <th>Age upon Outcome</th>
-      <th>Breed</th>
-      <th>Primary Color</th>
-      <th>Secondary Color</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>1963</th>
-      <td>A678645</td>
-      <td>NaN</td>
-      <td>2014-05-13 15:17:00</td>
-      <td>2012-05-11</td>
-      <td>Relocate</td>
-      <td>NaN</td>
-      <td>Other</td>
-      <td>Unknown</td>
-      <td>732 days 15:17:00</td>
-      <td>Raccoon Mix</td>
-      <td>Black</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>21783</th>
-      <td>A718875</td>
-      <td>NaN</td>
-      <td>2016-01-13 13:28:00</td>
-      <td>2015-01-08</td>
-      <td>Relocate</td>
-      <td>NaN</td>
-      <td>Bird</td>
-      <td>Unknown</td>
-      <td>370 days 13:28:00</td>
-      <td>Duck</td>
-      <td>White</td>
-      <td>Gray</td>
-    </tr>
-    <tr>
-      <th>28775</th>
-      <td>A676676</td>
-      <td>NaN</td>
-      <td>2014-04-14 16:35:00</td>
-      <td>2012-10-13</td>
-      <td>Relocate</td>
-      <td>NaN</td>
-      <td>Bird</td>
-      <td>Unknown</td>
-      <td>548 days 16:35:00</td>
-      <td>Duck</td>
-      <td>Brown</td>
-      <td>Tan</td>
-    </tr>
-    <tr>
-      <th>30431</th>
-      <td>A687222</td>
-      <td>NaN</td>
-      <td>2014-09-03 12:27:00</td>
-      <td>2014-03-02</td>
-      <td>Relocate</td>
-      <td>NaN</td>
-      <td>Other</td>
-      <td>Unknown</td>
-      <td>185 days 12:27:00</td>
-      <td>Opossum</td>
-      <td>Brown</td>
-      <td>White</td>
-    </tr>
-    <tr>
-      <th>31838</th>
-      <td>A736399</td>
-      <td>NaN</td>
-      <td>2016-10-11 10:22:00</td>
-      <td>2014-10-10</td>
-      <td>Relocate</td>
-      <td>NaN</td>
-      <td>Other</td>
-      <td>Intact Female</td>
-      <td>732 days 10:22:00</td>
-      <td>Raccoon</td>
-      <td>Black</td>
-      <td>Gray</td>
-    </tr>
-    <tr>
-      <th>33151</th>
-      <td>A748513</td>
-      <td>NaN</td>
-      <td>2017-05-03 11:28:00</td>
-      <td>2015-05-03</td>
-      <td>Relocate</td>
-      <td>NaN</td>
-      <td>Bird</td>
-      <td>Unknown</td>
-      <td>731 days 11:28:00</td>
-      <td>Crow Mix</td>
-      <td>Black</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>38196</th>
-      <td>A737965</td>
-      <td>NaN</td>
-      <td>2016-11-08 10:19:00</td>
-      <td>2016-05-07</td>
-      <td>Relocate</td>
-      <td>NaN</td>
-      <td>Other</td>
-      <td>Unknown</td>
-      <td>185 days 10:19:00</td>
-      <td>Raccoon</td>
-      <td>Brown</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>57390</th>
-      <td>A687250</td>
-      <td>NaN</td>
-      <td>2014-09-24 14:39:00</td>
-      <td>2014-03-02</td>
-      <td>Relocate</td>
-      <td>NaN</td>
-      <td>Other</td>
-      <td>Unknown</td>
-      <td>206 days 14:39:00</td>
-      <td>Raccoon Mix</td>
-      <td>Brown</td>
-      <td>Black</td>
-    </tr>
-    <tr>
-      <th>57429</th>
-      <td>A683134</td>
-      <td>NaN</td>
-      <td>2014-07-17 16:55:00</td>
-      <td>2014-06-07</td>
-      <td>Relocate</td>
-      <td>NaN</td>
-      <td>Other</td>
-      <td>Unknown</td>
-      <td>40 days 16:55:00</td>
-      <td>Raccoon Mix</td>
-      <td>Black</td>
-      <td>Gray</td>
-    </tr>
-    <tr>
-      <th>58657</th>
-      <td>A701725</td>
-      <td>NaN</td>
-      <td>2015-05-13 07:43:00</td>
-      <td>2014-11-03</td>
-      <td>Relocate</td>
-      <td>NaN</td>
-      <td>Bird</td>
-      <td>Unknown</td>
-      <td>191 days 07:43:00</td>
-      <td>Chicken</td>
-      <td>Black</td>
-      <td>NaN</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-Relocated animals do not have much associated information as shown in the table above, and so their removal may improve the analysis we can perform on other entries.
-
-In addition, if the animals are missing, they in essence do not have an outcome that is likely to help us to determine how their features influenced the outcomes, so these rows will be removed.
 
 
 ```python
-# Remove entries from rows with missing and relocated outcome types
-data = data[data['Outcome Type'] != 'Missing']
-data = data[data['Outcome Type'] !='Relocate']
-data['Outcome Type'].value_counts()
+# Construct plots to show percentage trends of cats and dogs that found homes by month
+plt.plot(range(1,13), list(cat_month_fh), 'k-')
+plt.plot(range(1,13), list(cat_month_fh), 'ro')
+
+plt.plot(range(1,13), list(dog_month_fh), 'k-')
+plt.plot(range(1,13), list(dog_month_fh), 'bo')
+
+# Plot formatting
+plt.xlabel('Month')
+plt.ylabel('% of Entries with Home Found')
+
+# Create a legend for plot
+cat_patch = mpatches.Patch(facecolor=(1, 0, 0), edgecolor='k', label='Cats')
+dog_patch = mpatches.Patch(facecolor=(0, 0, 1), edgecolor='k', label='Dogs')
+plt.legend(handles=[dog_patch, cat_patch])
+
+
+# Display plot
+plt.show()
 ```
 
 
+![png](output_46_0.png)
 
 
-    Adoption           32001
-    Transfer           23079
-    Return to Owner    13897
-    Euthanasia          5991
-    Died                 668
-    Disposal             303
-    Rto-Adopt            121
-    Relocate               0
-    Missing                0
-    Name: Outcome Type, dtype: int64
+By looking at the average adoption rates broken down by month we can see that for both cats and dogs, there seems to be spikes in adoptions around winter months (Nov. - Feb.) and summer months (Jun. - Aug.). The main difference here is that cats seem to have a much stronger dependence on the month of the year than dogs, which remains relatively consistent.
 
-
-
-Finally, we can also classify the marginal subtypes as 'Other' in order to reduce the number of subtypes we are dealing with:
+This suggests that the average placement rate value for 2013 found in the previous graph may not be representative of the placement rates for the entire year due to the data only being collected in October-December.
 
 
 ```python
-# Display number of occurences of outcome subtypes
-print('Outcome Subtypes\n', data['Outcome Subtype'].value_counts())
-```
+# cat outcomes vs. year
+cat_monthyear_fh = []
 
-    Outcome Subtypes
-     Partner                19316
-    Foster                  5407
-    SCRP                    3211
-    Suffering               2477
-    Rabies Risk             2374
-    Snr                      542
-    Aggressive               505
-    Offsite                  363
-    In Kennel                330
-    Medical                  253
-    In Foster                159
-    Behavior                 142
-    At Vet                    57
-    Enroute                   44
-    Underage                  28
-    Court/Investigation       18
-    In Surgery                16
-    Barn                       3
-    Possible Theft             0
-    Name: Outcome Subtype, dtype: int64
-    
+for year in range(2014,2018):
+    for month in range(1,13):
+        cat_month = 100*(cats.loc[(cat_years == year) & (cat_months == month)]['Found Home'] == 1).sum()/(cats.loc[(cat_years == year) & (cat_months == month)].shape[0])
+        cat_monthyear_fh.append(cat_month)
+
+# dog outcomes vs. year
+dog_monthyear_fh = []
+
+for year in range(2014,2018):
+    for month in range(1,13):
+        dog_month = 100*(dogs.loc[(dog_years == year) & (dog_months == month)]['Found Home'] == 1).sum()/(dogs.loc[(dog_years == year) & (dog_months == month)].shape[0])
+        dog_monthyear_fh.append(dog_month)
+```
 
 
 ```python
-# Create list with subtypes that have less than 100 occurrences each
-others = data['Outcome Subtype'].value_counts() < 100
-others = others[others == True].index.astype(str)
+# Construct plots to show percentage trends of cats and dogs that found homes by month
+plt.plot(range(len(cat_monthyear_fh)), list(cat_monthyear_fh), 'k-')
+plt.plot(range(len(cat_monthyear_fh)), list(cat_monthyear_fh), 'ro')
 
-# Convert Series back into string type temporarily for replacement
-data['Outcome Subtype'] = data['Outcome Subtype'].astype(str)
+plt.plot(range(len(dog_monthyear_fh)), list(dog_monthyear_fh), 'k-')
+plt.plot(range(len(dog_monthyear_fh)), list(dog_monthyear_fh), 'bo')
 
-# Initialize empty list and i for loop
-i = 0
-others_list = []
+# Plot formatting
+plt.xlabel('Breakdown by Months (Beginning Jan. 2014)')
+plt.ylabel('% of Entries with Home Found')
 
-# replace categories with less than 100 occurences each with 'Other' subtype
-for entry in data['Outcome Subtype'].isin(others):
-    if entry == True:
-        others_list.append('Other')
-    elif data.iloc[i, 5] == 'nan':
-        others_list.append(None)
-    else:
-        others_list.append(data.iloc[i, 5])
-    i += 1
-        
-others_list = pd.Categorical(others_list, ordered = False)
+# Create a legend for plot
+cat_patch = mpatches.Patch(facecolor=(1, 0, 0), edgecolor='k', label='Cats')
+dog_patch = mpatches.Patch(facecolor=(0, 0, 1), edgecolor='k', label='Dogs')
+plt.legend(handles=[dog_patch, cat_patch])
 
-# Merge replacements
-data['Outcome Subtype'] = others_list
 
-# Display occurrences of outcome subtypes after replacement
-print(data['Outcome Subtype'].value_counts())
+# Display plot
+plt.show()
 ```
 
-    Partner        19316
-    Foster          5407
-    SCRP            3211
-    Suffering       2477
-    Rabies Risk     2374
-    Snr              542
-    Aggressive       505
-    Offsite          363
-    In Kennel        330
-    Medical          253
-    Other            166
-    In Foster        159
-    Behavior         142
-    Name: Outcome Subtype, dtype: int64
-    
 
-## Closing Remarks
+![png](output_49_0.png)
 
-In this project, the Austin Animal Center dataset was explored and prepared for analysis. By converting columns into their appropriate formatting, removing duplicate information, and correcting missing values/outliers where possible, the data can yield more information in analysis. This includes the dataset taking less space in memory to work more quickly, as well as having a richer set of data which we can probe.
+
+We can see that the variations in adoptions for cats is again much larger than that for dogs, which is relatively consistent. 
+
+### Closing Remarks
+
+In this project the Austin Animal Center dataset was investigated with a wide range of metrics to suggest which factors seem to influence the animals that are able to be placed in permanent homes vs. those which are not. It was shown that dogs have a much higher placement rate overall than cats, while attributes such as breed and color seem to have a strong influence on the placement rates for both cats and dogs.
 
 ### Thanks for Reading!
