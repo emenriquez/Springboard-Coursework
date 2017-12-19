@@ -86,27 +86,7 @@ There are a few details to mention here. Firstly we can see that within our 12 c
 In order to get more information, we will preview the first few rows of the data.
 
 
-```python
-# 
-```
-
-
-
-
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -353,22 +333,14 @@ With these steps completed, the Austin Animal Center dataset was explored and pr
 It is very important to understand the general distributions of outcomes for cats and dogs, as well as the total number of each that the center recieves, in order to efficiently provide resources to shelter these animals. This section will break down the outcomes for both cats and dogs in order to gain more insight into the placement of these animals in permanent homes.
 
 
-```python
 
-```
-
-
-![png](output_24_0.png)
+![png](images/mr_output_24_0.png)
 
 
 We can see here that dogs are much more likely to have an outcome resulting in a permanent home than cats.
 
 We can also break these outcomes down further by their specific outcome type:
 
-
-```python
-#
-```
 
 While numbers for adoption are similar for both cats and dogs, many more dogs are classified as 'Return to Owner' than cats, which denotes dogs that were lost and returned to their owners. A large majority of cats are transferred to other facilities, which may indicate that other facilities are either better equipped to handle the volume of cats, or simply that the real estate at the Austin Animal Center does not allow support for enough cats.
 
@@ -380,21 +352,12 @@ In understanding the animal attributes that most affect the outcomes of animals 
 #### i. Gender
 
 
-```python
-#
-```
 
-
-![png](output_28_0.png)
+![png](images/mr_output_28_0.png)
 
 
 
-```python
-# 
-```
-
-
-![png](output_29_0.png)
+![png](images/mr_output_29_0.png)
 
 
 The distribution of outcomes for male and females in the cases of both cats and dogs shows that there is not a strong preference for either gender. Naturally, since animals are spayed and neutered when possible at animal shelters, most adoptions occur for these types rather than intact gender animals.
@@ -402,41 +365,23 @@ The distribution of outcomes for male and females in the cases of both cats and 
 #### ii. Age
 
 
-```python
-# 
-```
 
-
-![png](output_31_0.png)
+![png](images/mr_output_31_0.png)
 
 
 There seems to be a wide spread of ages for both cats and dogs, up to 22 years for cats and 20 years for dogs. Most of the animals are less than 4 years old in both cases. It would also be helpful to see the breakdown of outcomes for each of these age groups.
 
 
-```python
-#
-```
 
-
-![png](output_33_0.png)
+![png](images/mr_output_33_0.png)
 
 
 
-```python
-#
-```
-
-
-![png](output_34_0.png)
+![png](images/mr_output_34_0.png)
 
 
 
-```python
-# 
-```
-
-
-![png](output_35_0.png)
+![png](images/mr_output_35_0.png)
 
 
 As shown above, we can see that while all age groups have a higher frequency of dogs that are placed/returned to their homes, cats have a more complicated distribution. Both young (< 5 years old) and old (> 12 years old) seem to have mixed chances of being placed in a permanent home.
@@ -445,10 +390,6 @@ One interesting note is that in both cases, the oldest animals seem to have high
 
 #### iii. Breed
 
-
-```python
-#
-```
 
     10 Most Common Cat Breeds
                           Cat Breed  # of Cats
@@ -489,22 +430,14 @@ One interesting note is that in both cases, the oldest animals seem to have high
 In  both categories, we can see that mixed breeds are the most common. This is not surprising, though the distribution above shows that the breeds of dogs are much more varied than cats. The 10 most common breeds of dogs only account for about 58% of the total population of dogs that have gone through the center, but for cats the 10 most common breeds account for over 98% of the entries.
 
 
-```python
-#
-```
 
-
-![png](output_39_0.png)
+![png](images/mr_output_39_0.png)
 
 
 In the plot shown above, we can see that Domestic Shorthair mixed breeds in cats account for almost 80% of the cat entries alone. All entries in the most common cat breeds are mixed, since 'Domestic Shorthair' and 'Domestic Medium Hair' breeds are themselves mixed breed classifications.
 
 Next we can investigate the outcomes by breed:
 
-
-```python
-#
-```
 
     Cat Breeds with highest percentage of Homes Found
                             Breed  % of Breed that Found Home
@@ -538,10 +471,6 @@ Next we can investigate the outcomes by breed:
 All of the cat breeds with the highest percentages of placement in permanent homes represent breeds that are somewhat exotic when compared to the population that can be found in Austin, TX. We can also see that the Domestic Shorthair Mix that dominates the cat population in this dataset has a fairly low rate of adoption with ~46%.
 
 
-```python
-#
-```
-
     Dog Breeds with highest percentage of Homes Found
                         Breed  % of Breed that Found Home
     Rank                                                
@@ -574,12 +503,8 @@ All of the cat breeds with the highest percentages of placement in permanent hom
 The distribution for dogs similarly shows that exotic breeds seem to occupy many of the top ranking spots for adoption rates, although the wide variety of dog breeds also shows that there are many breeds that don't fare well. This might indicate that breed alone is not a good enough indication of the chances of adoption.
 
 
-```python
-#
-```
 
-
-![png](output_45_0.png)
+![png](images/mr_output_45_0.png)
 
 
 We can see that there are two opposing trends for cats and dogs here. For cats, purebreeds have a noticeably higher rate of adoption, while dogs see a drop in adoption rates for those that are not mixed breeds. This may be related to the high occurences of Domestic Shorthair cats at the center. When people come in to browse for pet adoption, it is easier for purebreeds to stand out in appearance when most cats are similar. The distribution of breeds for dogs are much more varied, and so this may not have the same impact on adoptions for dogs.
@@ -587,20 +512,12 @@ We can see that there are two opposing trends for cats and dogs here. For cats, 
 #### iv. Colors
 
 
-```python
-#
-```
 
-
-![png](output_47_0.png)
+![png](images/mr_output_47_0.png)
 
 
 Above are the 10 most common colors for both cats and dogs. If we investigate the rates of placement in permanent homes by color, it may be possible to extract information on which color animals are preferred by people looking for pets at the Austin Animal Center.
 
-
-```python
-#
-```
 
     Cat Colors with Highest percentage of Homes Found
              Primary Color  % of Color that Found Home
@@ -633,11 +550,6 @@ Above are the 10 most common colors for both cats and dogs. If we investigate th
 
 Now we can compare these rankings with those of the 10 most common cat colors that we saw earlier:
 
-
-```python
-#
-```
-
     Rankings of Colors Most Likely to Find Homes - for 10 Most Common Cat Colors
     Torbie: 11
     Calico: 15
@@ -651,10 +563,6 @@ Now we can compare these rankings with those of the 10 most common cat colors th
     Black: 29
     
 
-
-```python
-#
-```
 
     Dog Colors with Highest percentage of Homes Found
             Primary Color  % of Color that Found Home
@@ -688,10 +596,6 @@ Now we can compare these rankings with those of the 10 most common cat colors th
 Similarly, these rankings are now compared with those of the 10 most common dog colors:
 
 
-```python
-#
-```
-
     Rankings of Colors Most Likely to Find Homes - for 10 Most Common Dog Colors
     Chocolate: 14
     Tricolor: 15
@@ -706,23 +610,14 @@ Similarly, these rankings are now compared with those of the 10 most common dog 
     
 
 
-```python
-#
-```
-
-
-![png](output_55_0.png)
+![png](images/mr_output_55_0.png)
 
 
 The respective ranks in highest adoption rates for cats and dogs are denoted above the bars for each of the 10 most common colors. We can see again that none of the most common colors for both cats and dogs appear in their respective top lists of adoption rates. This further supports that a sense of exotic appearance of a pet may be a primary driver in people's choice of a pet.
 
 
-```python
-#
-```
 
-
-![png](output_57_0.png)
+![png](images/mr_output_57_0.png)
 
 
 The data above shows that for both cats and dogs, a secondary color slightly improves the rates of adoption. Animals with distinctive color combinations in their coats may stand out more visually to potential pet owners.
@@ -732,23 +627,15 @@ The data above shows that for both cats and dogs, a secondary color slightly imp
 Finally, I will take a brief look at the trends of cat and dog adoptions by year. The dataset covers a time period between 2013-10-01 09:31:00 and 2017-12-10 12:59:00
 
 
-```python
-#
-```
 
-
-![png](output_60_0.png)
+![png](images/mr_output_60_0.png)
 
 
 The graph above shows the average rates of placement in permanent homes for cats and dogs broken down by year. Although dogs have experienced a relative upward trend with time, cats seem to show a drop in rates from 2013 to 2014, but then the same relative upward trend. This may be an anomaly of our dataset, since we only have 2013 data for the months of October-December. If there is a dependence on adoptions vs. months of the year, this can introduce a bias into the 2013 data points.
 
 
-```python
-# 
-```
 
-
-![png](output_62_0.png)
+![png](images/mr_output_62_0.png)
 
 
 By looking at the average adoption rates broken down by month we can see that for both cats and dogs, there seems to be spikes in adoptions around winter months (Nov. - Feb.) and summer months (Jun. - Aug.). The main difference here is that cats seem to have a much stronger dependence on the month of the year than dogs, which remains relatively consistent.
@@ -756,12 +643,8 @@ By looking at the average adoption rates broken down by month we can see that fo
 This suggests that the average placement rate value for 2013 found in the previous graph may not be representative of the placement rates for the entire year due to the data only being collected in October-December.
 
 
-```python
-# 
-```
 
-
-![png](output_64_0.png)
+![png](images/mr_output_64_0.png)
 
 
 We can see that the variations in adoptions for cats is again much larger than that for dogs, which is relatively consistent. 
