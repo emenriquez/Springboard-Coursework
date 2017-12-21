@@ -332,7 +332,7 @@ With these steps completed, the Austin Animal Center dataset was explored and pr
 
 ## 3. Data Exploration <a class="anchor" id="EDA"></a>
 
-### 1. How Likely are adoptions for Cats vs. Dogs?
+### 3.1. How Likely are adoptions for Cats vs. Dogs?
 
 It is very important to understand the general distributions of outcomes for cats and dogs, as well as the total number of each that the center recieves, in order to efficiently provide resources to shelter these animals. This section will break down the outcomes for both cats and dogs in order to gain more insight into the placement of these animals in permanent homes.
 
@@ -356,7 +356,7 @@ The skew of classes in the dataset is important to note, since it will need to b
 
 While numbers for adoption are similar for both cats and dogs, many more dogs are classified as 'Return to Owner' than cats, which denotes dogs that were lost and returned to their owners. A large majority of cats are transferred to other facilities, which may indicate that other facilities are either better equipped to handle the volume of cats, or simply that the real estate at the Austin Animal Center does not allow support for enough cats.
 
-### 2. Analysis of Adoption Outcomes vs. Animal Attributes
+### 3.2. Analysis of Adoption Outcomes vs. Animal Attributes
 
 In understanding the animal attributes that most affect the outcomes of animals at this center, we can identify which animals have a higher chance of being adopted for this area. This, in conjunction with data on neighboring or partner centers might allow for avenues to 'match' animals that can maximize their chance of adoption in each area.
 
@@ -637,7 +637,7 @@ The respective ranks in highest adoption rates for cats and dogs are denoted abo
 
 The data above shows that for both cats and dogs, a secondary color slightly improves the rates of adoption. Animals with distinctive color combinations in their coats may stand out more visually to potential pet owners.
 
-### 3. Analysis of Adoption Outcomes vs. Year
+### 3.3. Analysis of Adoption Outcomes vs. Year
 
 Finally, I will take a brief look at the trends of cat and dog adoptions by year. The dataset covers a time period between 2013-10-01 09:31:00 and 2017-12-10 12:59:00
 
