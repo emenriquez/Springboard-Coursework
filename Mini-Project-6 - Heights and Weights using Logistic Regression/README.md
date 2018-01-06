@@ -194,7 +194,7 @@ plt.show()
 ```
 
 
-![png](output_9_0.png)
+![png](images/output_9_0.png)
 
 
 ### Training and Test Datasets
@@ -478,7 +478,7 @@ plt.plot(zs, h(zs), alpha=0.5);
 ```
 
 
-![png](output_35_0.png)
+![png](images/output_35_0.png)
 
 
 So we then come up with our rule by identifying:
@@ -597,7 +597,7 @@ points_plot(ax, Xtrain_l, Xtest_l, ytrain_l, ytest_l, clf_l, alpha=0.2);
 ```
 
 
-![png](output_39_0.png)
+![png](images/output_39_0.png)
 
 
 In the figure here showing the results of the logistic regression, we plot the actual labels of both the training(circles) and test(squares) samples. The 0's (females) are plotted in red, the 1's (males) in blue. We also show the classification boundary, a line (to the resolution of a grid square). Every sample on the red background side of the line will be classified female, and every sample on the blue side, male. Notice that most of the samples are classified well, but there are misclassified people on both sides, as evidenced by leakage of dots or squares of one color ontothe side of the other color. Both test and traing accuracy are about 92%.
@@ -699,7 +699,7 @@ points_plot_prob(ax, Xtrain_l, Xtest_l, ytrain_l, ytest_l, clf_l, psize=20, alph
 ```
 
 
-![png](output_48_0.png)
+![png](images/output_48_0.png)
 
 
 Notice that lines of equal probability, as might be expected are stright lines. What the classifier does is very intuitive: if the probability is greater than 0.5, it classifies the sample as type '1' (male), otherwise it classifies the sample to be class '0'. Thus in the diagram above, where we have plotted predicted values rather than actual labels of samples, there is a clear demarcation at the 0.5 probability line.
