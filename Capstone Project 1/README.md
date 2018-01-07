@@ -359,12 +359,7 @@ With these steps completed, the Austin Animal Center dataset was explored and pr
 It is very important to understand the general distributions of outcomes for cats and dogs, as well as the total number of each that the center recieves, in order to efficiently provide resources to shelter these animals. This section will break down the outcomes for both cats and dogs in order to gain more insight into the placement of these animals in permanent homes.
 
 
-```python
-
-```
-
-
-![png](output_24_0.png)
+![png](images/fr_output_24_0.png)
 
 
 We can see here that dogs are much more likely to have an outcome resulting in a permanent home than cats.
@@ -376,12 +371,7 @@ We can also break these outcomes down further by their specific outcome type:
 The skew of classes in the dataset is important to note, since it will need to be considered when evaluating our models in a [later section](#RF_eval).
 
 
-```python
-
-```
-
-
-![png](output_26_0.png)
+![png](images/fr_output_26_0.png)
 
 
 While numbers for adoption are similar for both cats and dogs, many more dogs are classified as 'Return to Owner' than cats, which denotes dogs that were lost and returned to their owners. A large majority of cats are transferred to other facilities, which may indicate that other facilities are either better equipped to handle the volume of cats, or simply that the real estate at the Austin Animal Center does not allow support for enough cats.
@@ -394,21 +384,11 @@ In understanding the animal attributes that most affect the outcomes of animals 
 #### i. Gender
 
 
-```python
-#
-```
-
-
-![png](output_28_0.png)
+![png](images/fr_output_28_0.png)
 
 
 
-```python
-# 
-```
-
-
-![png](output_29_0.png)
+![png](images/fr_output_29_0.png)
 
 
 The distribution of outcomes for male and females in the cases of both cats and dogs shows that there is not a strong preference for either gender. Naturally, since animals are spayed and neutered when possible at animal shelters, most adoptions occur for these types rather than intact gender animals.
@@ -416,41 +396,19 @@ The distribution of outcomes for male and females in the cases of both cats and 
 #### ii. Age
 
 
-```python
-# 
-```
-
-
-![png](output_31_0.png)
+![png](images/fr_output_31_0.png)
 
 
 There seems to be a wide spread of ages for both cats and dogs, up to 22 years for cats and 20 years for dogs. Most of the animals are less than 4 years old in both cases. It would also be helpful to see the breakdown of outcomes for each of these age groups.
 
 
-```python
-#
-```
+![png](images/fr_output_33_0.png)
 
 
-![png](output_33_0.png)
+![png](images/fr_output_34_0.png)
 
 
-
-```python
-#
-```
-
-
-![png](output_34_0.png)
-
-
-
-```python
-# 
-```
-
-
-![png](output_35_0.png)
+![png](images/fr_output_35_0.png)
 
 
 As shown above, we can see that while all age groups have a higher frequency of dogs that are placed/returned to their homes, cats have a more complicated distribution. Both young (< 5 years old) and old (> 12 years old) seem to have mixed chances of being placed in a permanent home.
@@ -459,10 +417,6 @@ One interesting note is that in both cases, the oldest animals seem to have high
 
 #### iii. Breed
 
-
-```python
-#
-```
 
     10 Most Common Cat Breeds
                           Cat Breed  # of Cats
@@ -503,22 +457,13 @@ One interesting note is that in both cases, the oldest animals seem to have high
 In  both categories, we can see that mixed breeds are the most common. This is not surprising, though the distribution above shows that the breeds of dogs are much more varied than cats. The 10 most common breeds of dogs only account for about 58% of the total population of dogs that have gone through the center, but for cats the 10 most common breeds account for over 98% of the entries.
 
 
-```python
-#
-```
-
-
-![png](output_39_0.png)
+![png](images/fr_output_39_0.png)
 
 
 In the plot shown above, we can see that Domestic Shorthair mixed breeds in cats account for almost 80% of the cat entries alone. All entries in the most common cat breeds are mixed, since 'Domestic Shorthair' and 'Domestic Medium Hair' breeds are themselves mixed breed classifications.
 
 Next we can investigate the outcomes by breed:
 
-
-```python
-#
-```
 
     Cat Breeds with highest percentage of Homes Found
                             Breed  % of Breed that Found Home
@@ -550,11 +495,6 @@ Next we can investigate the outcomes by breed:
     
 
 All of the cat breeds with the highest percentages of placement in permanent homes represent breeds that are somewhat exotic when compared to the population that can be found in Austin, TX. We can also see that the Domestic Shorthair Mix that dominates the cat population in this dataset has a fairly low rate of adoption with ~46%.
-
-
-```python
-#
-```
 
     Dog Breeds with highest percentage of Homes Found
                         Breed  % of Breed that Found Home
@@ -588,12 +528,7 @@ All of the cat breeds with the highest percentages of placement in permanent hom
 The distribution for dogs similarly shows that exotic breeds seem to occupy many of the top ranking spots for adoption rates, although the wide variety of dog breeds also shows that there are many breeds that don't fare well. This might indicate that breed alone is not a good enough indication of the chances of adoption.
 
 
-```python
-#
-```
-
-
-![png](output_45_0.png)
+![png](images/fr_output_45_0.png)
 
 
 We can see that there are two opposing trends for cats and dogs here. For cats, purebreeds have a noticeably higher rate of adoption, while dogs see a drop in adoption rates for those that are not mixed breeds. This may be related to the high occurences of Domestic Shorthair cats at the center. When people come in to browse for pet adoption, it is easier for purebreeds to stand out in appearance when most cats are similar. The distribution of breeds for dogs are much more varied, and so this may not have the same impact on adoptions for dogs.
@@ -601,20 +536,11 @@ We can see that there are two opposing trends for cats and dogs here. For cats, 
 #### iv. Colors
 
 
-```python
-#
-```
-
-
-![png](output_47_0.png)
+![png](images/fr_output_47_0.png)
 
 
 Above are the 10 most common colors for both cats and dogs. If we investigate the rates of placement in permanent homes by color, it may be possible to extract information on which color animals are preferred by people looking for pets at the Austin Animal Center.
 
-
-```python
-#
-```
 
     Cat Colors with Highest percentage of Homes Found
              Primary Color  % of Color that Found Home
@@ -648,10 +574,6 @@ Above are the 10 most common colors for both cats and dogs. If we investigate th
 Now we can compare these rankings with those of the 10 most common cat colors that we saw earlier:
 
 
-```python
-#
-```
-
     Rankings of Colors Most Likely to Find Homes - for 10 Most Common Cat Colors
     Torbie: 11
     Calico: 15
@@ -665,10 +587,6 @@ Now we can compare these rankings with those of the 10 most common cat colors th
     Black: 29
     
 
-
-```python
-#
-```
 
     Dog Colors with Highest percentage of Homes Found
             Primary Color  % of Color that Found Home
@@ -701,11 +619,6 @@ Now we can compare these rankings with those of the 10 most common cat colors th
 
 Similarly, these rankings are now compared with those of the 10 most common dog colors:
 
-
-```python
-#
-```
-
     Rankings of Colors Most Likely to Find Homes - for 10 Most Common Dog Colors
     Chocolate: 14
     Tricolor: 15
@@ -720,23 +633,12 @@ Similarly, these rankings are now compared with those of the 10 most common dog 
     
 
 
-```python
-#
-```
-
-
-![png](output_55_0.png)
+![png](images/fr_output_55_0.png)
 
 
 The respective ranks in highest adoption rates for cats and dogs are denoted above the bars for each of the 10 most common colors. We can see again that none of the most common colors for both cats and dogs appear in their respective top lists of adoption rates. This further supports that a sense of exotic appearance of a pet may be a primary driver in people's choice of a pet.
 
-
-```python
-#
-```
-
-
-![png](output_57_0.png)
+![png](images/fr_output_57_0.png)
 
 
 The data above shows that for both cats and dogs, a secondary color slightly improves the rates of adoption. Animals with distinctive color combinations in their coats may stand out more visually to potential pet owners.
@@ -746,23 +648,13 @@ The data above shows that for both cats and dogs, a secondary color slightly imp
 Finally, I will take a brief look at the trends of cat and dog adoptions by year. The dataset covers a time period between 2013-10-01 09:31:00 and 2017-12-10 12:59:00
 
 
-```python
-#
-```
-
-
-![png](output_60_0.png)
+![png](images/fr_output_60_0.png)
 
 
 The graph above shows the average rates of placement in permanent homes for cats and dogs broken down by year. Although dogs have experienced a relative upward trend with time, cats seem to show a drop in rates from 2013 to 2014, but then the same relative upward trend. This may be an anomaly of our dataset, since we only have 2013 data for the months of October-December. If there is a dependence on adoptions vs. months of the year, this can introduce a bias into the 2013 data points.
 
 
-```python
-# 
-```
-
-
-![png](output_62_0.png)
+![png](images/fr_output_62_0.png)
 
 
 By looking at the average adoption rates broken down by month we can see that for both cats and dogs, there seems to be spikes in adoptions around winter months (Nov. - Feb.) and summer months (Jun. - Aug.). The main difference here is that cats seem to have a much stronger dependence on the month of the year than dogs, which remains relatively consistent.
@@ -770,12 +662,7 @@ By looking at the average adoption rates broken down by month we can see that fo
 This suggests that the average placement rate value for 2013 found in the previous graph may not be representative of the placement rates for the entire year due to the data only being collected in October-December.
 
 
-```python
-# 
-```
-
-
-![png](output_64_0.png)
+![png](images/fr_output_64_0.png)
 
 
 We can see that the variations in adoptions for cats is again much larger than that for dogs, which is relatively consistent. 
@@ -796,11 +683,6 @@ Now that the data has been explored visually from several different angles, the 
 
 All of the data has been split into three subsets in order to build models. We will be using a training set to train the models; a CV, or cross-validation, set that will help us to test and optimize the model in order to increase performance where possible by fine tuning various parameters, and an independent test set which will only be used at the end to gauge the final performance of the models. The distribution is shown below:
 
-
-```python
-# 
-```
-
     Number of training entries: 42921 -> 60% of data
     Number of CV entries: 14307 -> 20% of data
     Number of test entries: 14307 -> 20% of data
@@ -811,27 +693,7 @@ In order to use logistic regression on this dataset, I will begin by selecting a
 An example of this is shown below, where a best subset selection technique was applied to the data in order to approximate the top 5 predictive features in the data.
 
 
-```python
-# 
-```
-
-
-
-
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -867,12 +729,7 @@ An example of this is shown below, where a best subset selection technique was a
 
 
 
-```python
-# 
-```
-
-
-![png](output_74_0.png)
+![png](images/fr_output_74_0.png)
 
 
 Here we can see a curve of the F1 score (which is a performance metric that will be described in greater detail later on in this report) vs. the number of features that we use for prediction in our best subset selection. We can see here that while we get pretty big increases in our score by increasing the number of features we use up to 5, after that the performance gains taper off. We will then use a subset of the 5 best features as selected by this calculation in order to get a good combination of predictive potential and relatively low complexity.
@@ -880,31 +737,21 @@ Here we can see a curve of the F1 score (which is a performance metric that will
 Before starting this process, we will first get a baseline of predictions for our data. Since the subset selection algorithm determines that the Cat (dog = 0, cat = 1) feature is the most important of our features, we will obtain a baseline by making predictions on a simple logistic regression model that only takes into account the Cat variable (e.g. all dogs find homes, all cats do not find homes).
 
 
-```python
-# 
-```
-
-
-![png](output_76_0.png)
+![png](images/fr_output_76_0.png)
 
 
 
-![png](output_76_1.png)
+![png](images/fr_output_76_1.png)
 
 
 The results for this simple model show that while the model performs well on predicting the positive outcome of finding a home, it misclassifies many negative outcomes as Found Home. Next, we can see if there is an improvement using our best subset selection:
 
 
-```python
-# 
-```
-
-
-![png](output_78_0.png)
+![png](images/fr_output_78_0.png)
 
 
 
-![png](output_78_1.png)
+![png](images/fr_output_78_1.png)
 
 
 Confusion matrices, such as the one shown above, can give us a good visualization of the predictive performance of our model. We can see here that 90% of the animals that found permanent homes were categorized correctly, which is pretty good performance. This indicates a low rate of False Negatives, where we would predict that an animal did not find a home when in reality it did. On the other hand, our model has a fairly high occurence of False Positives, meaning that if we predicted that an animal would find a home, there is also a fairly large fraction of these animals that did not end up being placed in a home.
@@ -912,12 +759,7 @@ Confusion matrices, such as the one shown above, can give us a good visualizatio
 In order to tune the performance of our model, we can vary the threshold at which we predict that an animal will find a home. The default for the model that we used previously was 50%. This means that if an animal has a higher than 50% chance of finding a home as measured by our model, then our model will make a Yes prediction. The threshold can be raised or lowered for different results, as shown below.
 
 
-```python
-# 
-```
-
-
-![png](output_80_0.png)
+![png](images/fr_output_80_0.png)
 
 
 In order to give our model a single-number metric that we can use to gauge its performance, we will be using the F1 score, which is calculated as follows:  
@@ -928,13 +770,7 @@ where **precision** is the fraction of true positives divided by the total numbe
 
 The graph above shows the ratio between precision and recall for all threshold values in the model. Although the F1 score gives us a standard baseline, in order to specialize the functionality of the trained model it is also good to consider whether it is important for the predictions to have either high precision, or high recall, since the graph above shows us that this is usually a trade-off.
 
-
-```python
-# 
-```
-
-
-![png](output_82_0.png)
+![png](images/fr_output_82_0.png)
 
 
 In the graph above, wew can see the F1 score as a function of the threshold we choose to predict "Home Found" for an animal.
@@ -942,23 +778,14 @@ In the graph above, wew can see the F1 score as a function of the threshold we c
 This will give us guidance on the range in which we can set the threshold value to achieve the best standard combination of precision and recall. We will use the maximum value here and feed it back into our original model to see the change in performance.
 
 
-```python
-
-```
-
-
-![png](output_84_0.png)
+![png](images/fr_output_84_0.png)
 
 
 The performance is similar, though now there is a reduction in false negatives in our predictions. Now that the model has been optimized by both subset selection and by tuning the threshold for prediction, we can test the model performance on the test dataset.
 
 
-```python
-# 
-```
 
-
-![png](output_86_0.png)
+![png](images/fr_output_86_0.png)
 
 
 The confusion matrix above shows the model's performance on a test dataset. We can see that while the model captures almost all of the "Home Found" predictions, it still struggles to classify those animals that were not placed in permanent homes, with a fairly large proportion of false positives.
@@ -968,38 +795,26 @@ The next step we can try is to see how a different model can perform on the data
 ### 5.2 Random Forest (Home Found vs. No Home Found)  <a class="anchor" id="RF"></a>
 
 
-```python
-#
-```
 
-
-![png](output_89_0.png)
+![png](images/fr_output_89_0.png)
 
 
 Above we can see a very useful plot of the measured importance and ranking of each feature as measured by the 1000 samples we have taken in our random forest model gender seems to play a very important role, as does the 'Cat' feature, which simply indicates whether the animal was a cat (1) or a dog (0). Surprisingly, we see that the cat features "Domestic Shorthair" breed as well asa "Brown Tabby" color make the top list of most important features in our model.
 
 
-```python
-#
-```
 
 
-![png](output_91_0.png)
+![png](images/fr_output_91_0.png)
 
 
 
-![png](output_91_1.png)
+![png](images/fr_output_91_1.png)
 
 
 Above are the normalized and non-normalized confusion matrices to see the performance of our model. The performance looks comparable to our logistic regression model, but now we will check it against the independent test set of data.
 
 
-```python
-#
-```
-
-
-![png](output_93_0.png)
+![png](images/fr_output_93_0.png)
 
 
 We can see here that we have only a tiny increase in predictive accuracy on the test set for our random forest model when compared to our optimized logistic regression model. Rather than this indicating a limit to the model itself, it is much more likely that this is an indication that either the structure of our engineered features or our cost function that evaluates the model should be further improved.
@@ -1010,39 +825,16 @@ Now that we have taken a look at the binomial classification models, we can turn
 
 ### 6.1 Logistic Regression (Outcome Type Prediction) <a class="anchor" id="Log_Regression2"></a>
 
-
-```python
-# 
-```
-
-
-![png](output_97_0.png)
+![png](images/fr_output_97_0.png)
 
 
 We will again use best subset selection for the logistic regression model. The subset features for the top 5 features are shown below. Note that the rankings of these features are different than those in the binomial classification model.
 
 
-```python
-# 
-```
-
 
 
 
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -1077,76 +869,39 @@ We will again use best subset selection for the logistic regression model. The s
 
 
 
-
-```python
-# 
-```
-
-
-![png](output_100_0.png)
+![png](images/fr_output_100_0.png)
 
 
 
-![png](output_100_1.png)
+![png](images/fr_output_100_1.png)
 
 
 <a class="anchor" id="RF_eval"></a>
 Above are expanded versions of the confusion matrices that were built in the previous sections with the 5 outcome types we are predicting. We can see here that while the model predicts well on the Adoption outcome, and relatively well on the Transfer outcome, for Death, Euthanasia and Return to Owner performance is notably lacking, even using our best subset. These categories have a much smaller distribution of entries, as we can see in reference to an [earlier visualization](#skew) that was made during exploration of the dataset. A different model input may need to be generated in order to better predict these small classes.
 
 
-```python
-# Perform logistic regression on selected features for test set
-fit = lm.fit(X_train_subset, y_train)
-predict = lm.predict(X_test[X_train.columns[subset.get_support()].values.tolist()])
-
-#Generate Confusion Matrix for test dataset
-cnf_matrix = confusion_matrix(y_test, predict)
-
-# Plot normalized confusion matrix for test dataset
-plt.figure(figsize = (8,6))
-plot_confusion_matrix(cnf_matrix,
-                      classes=['Adoption', 'Death', 'Euthanasia', 'Return to Owner', 'Transfer'],
-                      normalize=True,
-                      title='Logistic Regression Normalized Confusion Matrix\n -Test Dataset-')
-
-plt.show()
-```
-
-
-![png](output_102_0.png)
+![png](images/fr_output_102_0.png)
 
 
 ### 6.2 Random Forest (Outcome Type Prediction)  <a class="anchor" id="RF2"></a>
 
 
-```python
-#
-```
 
-
-![png](output_104_0.png)
+![png](images/fr_output_104_0.png)
 
 
 
-```python
-#
-```
 
-
-![png](output_105_0.png)
+![png](images/fr_output_105_0.png)
 
 
 
-![png](output_105_1.png)
+![png](images/fr_output_105_1.png)
 
 
 
-```python
-# 
-```
 
-
-![png](output_106_0.png)
+![png](images/fr_output_106_0.png)
 
 
 Again we see that the dominant outcomes for our random forest model also strongly prefers classifications of Adoption and Transfer, with the three smaller subsets not being captured by the model predictions.
@@ -1158,12 +913,8 @@ One technique we can use in order to improve our model's performance on the clas
 Choosing the adjusted class weights is its own optimization task, but we can estimate a set of weights likely to improve our performance by simply giving the weights according to the inverse of the fraction of distribution that they occupy in the dataset. Below is a pie chart showing the distribution of outcomes that we are attempting to predict.
 
 
-```python
-# 
-```
 
-
-![png](output_109_0.png)
+![png](images/fr_output_109_0.png)
 
 
 We can see that Return to Owner, Euthanasia, and Death classes occupy a substantially smaller fraction of the overall outcomes than adoption and transfer, and is where our model was lacking most. We now fit the random forest classifier to the same dataset, but have adjusted the class weights such that the fringe classes have a higher penalty for misclassification according to their fraction. (e.g. Euthanasia is 4% of outcomes, so weight is adjusted to be 1/.04 = 25. This means one misclassification of Euthanasia carries 25 times the normal penalty)
@@ -1171,34 +922,21 @@ We can see that Return to Owner, Euthanasia, and Death classes occupy a substant
 Below are the adjusted results:
 
 
-```python
-# 
-```
 
-
-![png](output_111_0.png)
+![png](images/fr_output_111_0.png)
 
 
 
-```python
-# 
-```
 
-
-![png](output_112_0.png)
+![png](images/fr_output_112_0.png)
 
 
 
-![png](output_112_1.png)
+![png](images/fr_output_112_1.png)
 
 
 
-```python
-#
-```
-
-
-![png](output_113_0.png)
+![png](images/fr_output_113_0.png)
 
 
 We can see that although the classification accuracy of Adoptiono and Transfer are slightly reduced, there is a significant increase in the overall performance of our model as shown by the increase in values across the diagonal in our confusion matrices! Further tuning and optimization is still likely to help to improve the predictions further.
