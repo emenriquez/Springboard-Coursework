@@ -82,19 +82,6 @@ data.head(10)
 
 
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -180,10 +167,6 @@ There are three columns presented above:
 The main columns of interest here are the cuisine and ingredients categories. To begin, we should inspect the contents of each. Below is a list of all cuisine categories that appear in the dataset.
 
 
-```python
-# 
-```
-
     Cuisine Categories in the dataset (by occurence):
     italian         7838
     mexican         6438
@@ -211,7 +194,7 @@ The main columns of interest here are the cuisine and ingredients categories. To
     
 
 
-![png](output_8_1.png)
+![png](images/mr_output_8_1.png)
 
 
 We can see that some categories, such as Italian and Mexican Cuisines occupy much larger fractions of the data, but overall there aren't any cuisines with overly small amounts of recipes represented here.
@@ -219,9 +202,6 @@ We can see that some categories, such as Italian and Mexican Cuisines occupy muc
 Next we will take a look at the ingredient details. First, we will look at the statistics of overall length of the ingredients list for each entry.
 
 
-```python
-# 
-```
 
     count    39774.000000
     mean        10.767713
@@ -237,15 +217,12 @@ Next we will take a look at the ingredient details. First, we will look at the s
     
 
 
-![png](output_10_1.png)
+![png](images/mr_output_10_1.png)
 
 
 There is quite a large variation in the number of ingredients per recipe, with a maximum of 65 in this dataset. The average tends to be about 10 ingredients per recipe. Surprisingly, there are recipes with only 1 ingredient! We can see the ingredients for these below.
 
 
-```python
-# 
-```
 
     japanese ['sushi rice']
     vietnamese ['dried rice noodles']
@@ -273,10 +250,6 @@ There is quite a large variation in the number of ingredients per recipe, with a
 
 Now we can look at some more details of the ingredients we are working with. We will look at the total list of all ingredients in the data.
 
-
-```python
-# 
-```
 
     Number of unique ingredients in the dataset: 6714
     Number of total ingredients in the dataset: 428275
@@ -312,55 +285,15 @@ Now we can look at some more details of the ingredients we are working with. We 
     purple onion                                   1896
     scallions                                      1891
     grated parmesan cheese                         1886
-                                                  ...  
-    lamb rib roast                                    1
-    bird pepper                                       1
-    tuna, drain and flake                             1
-    JonshonvilleÂ® Cajun Style Chicken Sausage        1
-    frozen sweetened raspberries                      1
-    BACARDIÂ® Superior                                1
-    angled loofah                                     1
-    dried pineapple                                   1
-    semisweet vegan chocolate chips                   1
-    peppermint schnapps                               1
-    rock cornish game hens                            1
-    boneless skinless chicken thigh fillets           1
-    sliced mango                                      1
-    garlic olive oil                                  1
-    cubed mango                                       1
-    San Marzano Diced Tomatoes                        1
-    japanese style bread crumbs                       1
-    fat-trimmed beef flank steak                      1
-    puff pastry cups                                  1
-    arepa flour                                       1
-    fresno pepper                                     1
-    shredded low-fat cheddar                          1
-    jumbo shell pasta , cook and drain                1
-    bean curd stick                                   1
-    wasabe                                            1
-    sweet chorizo                                     1
-    A Taste of Thai Rice Noodles                      1
-    butter flavor shortening                          1
-    diced mushrooms                                   1
-    italian style rolls                               1
-    Length: 6714, dtype: int64
     
 
 
-```python
-# 
-```
 
-
-![png](output_15_0.png)
+![png](images/mr_output_15_0.png)
 
 
 We can see that while salt is almost ubiquitous, less than half of our ingredients show up more than a few times each. This will need to be addressed, since it may make building a predictive model very difficult. One reason for this is that many similar ingredients have many variants, as is shown below for ingredients containing "Turkey".
 
-
-```python
-#
-```
 
     turkey breast steaks: 1
     turkey salami: 1
@@ -438,10 +371,6 @@ Note: some words don't play nicely with NLTK's database of vocabulary (such as '
 After these processing steps, the data has been transformed to what is shown below:
 
 
-```python
-# 
-```
-
           original ingredients     simplified
     0                     salt           salt
     1                   onions          onion
@@ -496,10 +425,6 @@ The following steps were taken to deal with misspelled words:
 The number of misspelled ingredients remaining are shown below:
 
 
-```python
-# 
-```
-
     Number of total misspellings occuring in simple_ingredients4: 701
     misspell_errors list exported to .txt file!
     
@@ -517,11 +442,6 @@ Using Google's spell check, I was able to complete these steps in less than 5 mi
 Now that we have run through quite a few of our options in removing errors and combining ingredients via several methods, we see that we still have about 4,000 ingredients in our list (60% of our original ingredients!). But which of these are useful to our analysis? Next I remove outliers in the dataset for ingredients that only appear a few times within the ~40k recipes.
 
 
-```python
-print('Number of unique ingredients in simplified dataset: {0}'.format(len(set(total_ingredients))))
-print('Number of unique ingredient words: {0}'.format(len(set(total_words))))
-```
-
     Number of unique ingredients in simplified dataset: 4068
     Number of unique ingredient words: 2081
     
@@ -529,18 +449,10 @@ print('Number of unique ingredient words: {0}'.format(len(set(total_words))))
 Although we still have about 4,000 ingredients in our dataset, we can see that only 2,000 ingredient words appear in the data. Additionally, we can compare the distribution of ingredients before and after our processing of the data.
 
 
-```python
-# 
-```
+
+![png](images/mr_output_26_0.png)
 
 
-![png](output_26_0.png)
-
-
-
-```python
-#
-```
 
     Top 10 most common original ingredients:
     salt                   18049
@@ -590,11 +502,6 @@ Although we still have about 4,000 ingredients in our dataset, we can see that o
     
 
 
-```python
-print('Number of ingredients that appear more than 40 times (0.1% of entries in data): {0}'.format(simple_ingredient_rankings[simple_ingredient_rankings > 40].shape[0]))
-print('Number of words that appear more than 40 times (0.1% of entries in data): {0}'.format(word_rankings[word_rankings > 40].shape[0]))
-```
-
     Number of ingredients that appear more than 40 times (0.1% of entries in data): 733
     Number of words that appear more than 40 times (0.1% of entries in data): 610
     
@@ -610,10 +517,6 @@ This dataset will be what is used for exploration and analysis, and has the foll
 
 Additionally, since come of the ingredients lists may have been emptied if they only contained non-noun words or symbols, we must removed these rows before exporting our dataset.
 
-
-```python
-# 
-```
 
     Number of rows dropped from dataset: 17
     
@@ -652,19 +555,6 @@ data.head()
 
 
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -732,19 +622,6 @@ cuisines[1].head()
 
 
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -802,110 +679,32 @@ We will use a collection of wordclouds since: 1) They are a pretty good way to v
 Below is a preview of the collection of wordclouds generated from their respective ingredients lists.
 
 
-```python
-# 
-```
+![png](images/mr_output_40_0.png)
 
 
-![png](output_40_0.png)
 
 
+![png](images/mr_output_41_0.png)
 
-```python
-#
-```
 
 
-![png](output_41_0.png)
+![png](images/mr_output_41_1.png)
 
 
 
-![png](output_41_1.png)
+![png](images/mr_output_41_2.png)
 
 
 
-![png](output_41_2.png)
-
-
-
-![png](output_41_3.png)
-
-
-
-![png](output_41_4.png)
-
-
-
-![png](output_41_5.png)
-
-
-
-![png](output_41_6.png)
-
-
-
-![png](output_41_7.png)
-
-
-
-![png](output_41_8.png)
-
-
-
-![png](output_41_9.png)
-
-
-
-![png](output_41_10.png)
-
-
-
-![png](output_41_11.png)
-
-
-
-![png](output_41_12.png)
-
-
-
-![png](output_41_13.png)
-
-
-
-![png](output_41_14.png)
-
-
-
-![png](output_41_15.png)
-
-
-
-![png](output_41_16.png)
-
-
-
-![png](output_41_17.png)
-
-
-
-![png](output_41_18.png)
-
-
-
-![png](output_41_19.png)
-
+![png](images/mr_output_41_3.png)
 
 There are a few things we can see by looking briefly through the wordclouds above. Firstly, ingredients like salt and onions seem to be ubiquitous, represented in every cuisine of our dataset. Alternatively, there are some clearly unique ingredients widely used in some cuisines, such as cumin in Mexican recipes. These standouts may definitely help us to build a model of cuisine prediction later on, if they can be weighted more importantly than those which appear in all cuisines.
 
 We can also see rankings of the average lengths of ingredients lists for each cuisine to get an idea of which cuisines enjoy more complex dishes than others.
 
 
-```python
-#
-```
 
-
-![png](output_43_0.png)
+![png](images/mr_output_43_0.png)
 
 
 It looks like cuisines like Moroccan, Indian and Thai use the most ingredients per recipe, while British, Irish and Brazilian cuisines have slightly simpler recipe lists.
@@ -913,12 +712,7 @@ It looks like cuisines like Moroccan, Indian and Thai use the most ingredients p
 It may also be useful to see which cuisines use the widest variety of ingredients to get an idea of the breadth of ingredients or flavors that make up each cuisine.
 
 
-```python
-#
-```
-
-
-![png](output_45_0.png)
+![png](images/mr_output_45_0.png)
 
 
 We can see that although Moroccan, Indian and Thai lead with the most ingredients per recipe, the kitchens of Mexican, Italian and Southern U.S. cuisines are stocked with a larger variety of ingredients in our dataset. In all cases, Brazilian cuisine tends to be a simpler affair.
@@ -931,23 +725,15 @@ While the visualizations above are nice, ubiquitous ingredients such as onion, s
 Before we can proceed to apply this weighting to our cuisine ingredient lists, the ingredient lists for recipes of each cuisine will be normalized to be approximately the same length to adjust for cuisines that have a wide difference in the number of recipes represented. We will choose a random sample set of 20,000 ingredients for each cuisine for our analysis (the mean ingredients for all recipes is ~10, so this approximates about 2,000 recipes each).
 
 
-```python
-#
-```
 
-
-![png](output_47_0.png)
+![png](images/mr_output_47_0.png)
 
 
 The plots above show us a much better representation of which ingredients form the unique signature of each cuisine. We can also use this grouping to see how similar cuisines are, as shown below.
 
 
-```python
-# 
-```
 
-
-![png](output_49_0.png)
+![png](images/mr_output_49_0.png)
 
 
 Great! Although we've input nothing beyond labels and recipe ingredients, we can see that the visualization has naturally grouped together cuisines that are similar! Geography seems to play a role, since many Eastern and Western countries are grouped closely, and we can see the cuisines that best bridge the gap between these two, such as Filipino and Indian cuisines!
@@ -955,98 +741,33 @@ Great! Although we've input nothing beyond labels and recipe ingredients, we can
 Now that we seem to have isolated the valuable data, we can return to our wordclouds and generate wordclouds that accurately depict the signature ingredients of each cuisine.
 
 
-```python
-#
-```
 
-
-![png](output_51_0.png)
-
-
-
-![png](output_51_1.png)
-
-
-
-![png](output_51_2.png)
-
-
-
-![png](output_51_3.png)
-
-
-
-![png](output_51_4.png)
-
-
-
-![png](output_51_5.png)
-
-
-
-![png](output_51_6.png)
-
-
-
-![png](output_51_7.png)
-
-
-
-![png](output_51_8.png)
-
-
-
-![png](output_51_9.png)
-
-
-
-![png](output_51_10.png)
-
-
-
-![png](output_51_11.png)
-
-
-
-![png](output_51_12.png)
-
-
-
-![png](output_51_13.png)
-
-
-
-![png](output_51_14.png)
-
-
-
-![png](output_51_15.png)
-
-
-
-![png](output_51_16.png)
-
-
-
-![png](output_51_17.png)
-
-
-
-![png](output_51_18.png)
-
-
-
-![png](output_51_19.png)
+![png](images/mr_output_51_0.png)
+![png](images/mr_output_51_1.png)
+![png](images/mr_output_51_2.png)
+![png](images/mr_output_51_3.png)
+![png](images/mr_output_51_4.png)
+![png](images/mr_output_51_5.png)
+![png](images/mr_output_51_6.png)
+![png](images/mr_output_51_7.png)
+![png](images/mr_output_51_8.png)
+![png](images/mr_output_51_9.png)
+![png](images/mr_output_51_10.png)
+![png](images/mr_output_51_11.png)
+![png](images/mr_output_51_12.png)
+![png](images/mr_output_51_13.png)
+![png](images/mr_output_51_14.png)
+![png](images/mr_output_51_15.png)
+![png](images/mr_output_51_16.png)
+![png](images/mr_output_51_17.png)
+![png](images/mr_output_51_18.png)
+![png](images/mr_output_51_19.png)
 
 
 ### TF-IDF for each recipe
 
 Now that we have looked at ingredients grouped together by their cuisine, we can perform a similar representation and visualization by processing each recipe individually into a TF-IDF weighted format.
 
-
-```python
-# 
-```
 
 
 
@@ -1059,12 +780,7 @@ Now that we have looked at ingredients grouped together by their cuisine, we can
 This time, instead of just projecting the data onto 2 dimensions, we will compress the data onto about 100 dimensions and then feed that into a t-SNE algorithm. This algorithm will plot the data onto a 2-dimensional space that we can try to use to visualize if cuisine recipes can be grouped together without explicit labelling.
 
 
-```python
-# 
-```
-
-
-![png](output_55_0.png)
+![png](images/mr_output_55_0.png)
 
 
 We can see above that there are some nice groupings for most of the data above! The algorithm has done a good job representing each individual recipe with its associated cuisine. There is still room for improvement here though, since several of the cuisines with less entries such as British, Irish, Russian, etc. Are still quite spread out.
