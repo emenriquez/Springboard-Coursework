@@ -702,7 +702,6 @@ Below is a preview of the collection of wordclouds generated from their respecti
 ![png](images/mr_output_41_1.png)
 ![png](images/mr_output_41_2.png)
 ![png](images/mr_output_41_3.png)
-![png](images/mr_output_41_4.png)
 
 There are a few things we can see by looking briefly through the wordclouds above. Firstly, ingredients like salt and onions seem to be ubiquitous, represented in every cuisine of our dataset. Alternatively, there are some clearly unique ingredients widely used in some cuisines, such as cumin in Mexican recipes. These standouts may definitely help us to build a model of cuisine prediction later on, if they can be weighted more importantly than those which appear in all cuisines.
 
@@ -740,10 +739,27 @@ Great! Although we've input nothing beyond labels and recipe ingredients, we can
 
 Now that we seem to have isolated the valuable data, we can return to our wordclouds and generate wordclouds that accurately depict the signature ingredients of each cuisine.
 
+
 ![png](images/mr_output_51_0.png)
 ![png](images/mr_output_51_1.png)
 ![png](images/mr_output_51_2.png)
 ![png](images/mr_output_51_3.png)
+![png](images/mr_output_51_4.png)
+![png](images/mr_output_51_5.png)
+![png](images/mr_output_51_6.png)
+![png](images/mr_output_51_7.png)
+![png](images/mr_output_51_8.png)
+![png](images/mr_output_51_9.png)
+![png](images/mr_output_51_10.png)
+![png](images/mr_output_51_11.png)
+![png](images/mr_output_51_12.png)
+![png](images/mr_output_51_13.png)
+![png](images/mr_output_51_14.png)
+![png](images/mr_output_51_15.png)
+![png](images/mr_output_51_16.png)
+![png](images/mr_output_51_17.png)
+![png](images/mr_output_51_18.png)
+![png](images/mr_output_51_19.png)
 
 
 ### TF-IDF for each recipe
