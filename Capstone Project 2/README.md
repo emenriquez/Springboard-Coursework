@@ -744,22 +744,6 @@ Now that we seem to have isolated the valuable data, we can return to our wordcl
 ![png](images/mr_output_51_1.png)
 ![png](images/mr_output_51_2.png)
 ![png](images/mr_output_51_3.png)
-![png](images/mr_output_51_4.png)
-![png](images/mr_output_51_5.png)
-![png](images/mr_output_51_6.png)
-![png](images/mr_output_51_7.png)
-![png](images/mr_output_51_8.png)
-![png](images/mr_output_51_9.png)
-![png](images/mr_output_51_10.png)
-![png](images/mr_output_51_11.png)
-![png](images/mr_output_51_12.png)
-![png](images/mr_output_51_13.png)
-![png](images/mr_output_51_14.png)
-![png](images/mr_output_51_15.png)
-![png](images/mr_output_51_16.png)
-![png](images/mr_output_51_17.png)
-![png](images/mr_output_51_18.png)
-![png](images/mr_output_51_19.png)
 
 
 ### TF-IDF for each recipe
