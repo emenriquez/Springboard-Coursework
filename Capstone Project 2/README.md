@@ -702,6 +702,7 @@ Below is a preview of the collection of wordclouds generated from their respecti
 ![png](images/mr_output_41_1.png)
 ![png](images/mr_output_41_2.png)
 ![png](images/mr_output_41_3.png)
+![png](images/mr_output_41_4.png)
 
 There are a few things we can see by looking briefly through the wordclouds above. Firstly, ingredients like salt and onions seem to be ubiquitous, represented in every cuisine of our dataset. Alternatively, there are some clearly unique ingredients widely used in some cuisines, such as cumin in Mexican recipes. These standouts may definitely help us to build a model of cuisine prediction later on, if they can be weighted more importantly than those which appear in all cuisines.
 
@@ -738,7 +739,6 @@ The plots above show us a much better representation of which ingredients form t
 Great! Although we've input nothing beyond labels and recipe ingredients, we can see that the visualization has naturally grouped together cuisines that are similar! Geography seems to play a role, since many Eastern and Western countries are grouped closely, and we can see the cuisines that best bridge the gap between these two, such as Filipino and Indian cuisines!
 
 Now that we seem to have isolated the valuable data, we can return to our wordclouds and generate wordclouds that accurately depict the signature ingredients of each cuisine.
-
 
 ![png](images/mr_output_51_0.png)
 ![png](images/mr_output_51_1.png)
@@ -939,12 +939,20 @@ The dummy model is the simplest version of a classifier that we can use to gauge
 
 Looking at our baseline, it seems that Logistic Regression, Naive Bayes and Gradient Boosting models are the top performers, but we still require more optimization to get an idea of which model is most suitable for our data.
 
+The following optimizations were performed on these models:
 
-    Multinomial Naive Bayes model average F1-score: 0.69
-    Logistic Regression model average F1-score: 0.69
-    Random Forest model average F1-score: 0.70
-    Extremely Randomized Trees model average F1-score: 0.72
-    Gradient Boosting model average F1-score: 0.70
+* The number of estimators for each model was increased to an acceptable level. This provides a trade-off between classification accuracy and training time.
+* Each model was given class weights for each cuisine that more accurately represented the distribution of recipes in the dataset. This was done so that correct classifications of cuisines with more entries such as Italian and Mexican wouldn't completely overshadow the training of the model on cuisines with a smaller number of recipes such as Russian and Brazilian
+* The method of fitting for logistic regression was set to "multi-class" instead of a One vs. Rest training algorithm. This utilizes cross-entropy loss for each cuisine class.
+
+
+
+
+    	Multinomial Naive Bayes model average F1-score: 0.69
+    	Logistic Regression model average F1-score: 0.69
+    	Random Forest model average F1-score: 0.70
+    	Extremely Randomized Trees model average F1-score: 0.72
+    	Gradient Boosting model average F1-score: 0.70
     
 
 
