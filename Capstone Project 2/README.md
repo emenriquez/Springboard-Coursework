@@ -1175,6 +1175,7 @@ The **[web app](https://lit-caverns-54863.herokuapp.com)** is still in its first
 * Yummly - [Homepage](https://www.yummly.com/), [API Information](https://developer.yummly.com/) 
 * Dataset - [Kaggle's "What's Cooking?" Competition Site](https://www.kaggle.com/c/whats-cooking/data)
 * Project Proposal - [github link](https://github.com/emenriquez/Springboard-Coursework/blob/master/Capstone%20Project%202/Project%20Proposal%20-%20Cuisines.md)
+* Presentation Slide Deck - [github link](https://github.com/emenriquez/Springboard-Coursework/blob/master/Capstone%20Project%202/Slide%20Deck%20-%20Cuisines.pptx)
 * Code (IPython Notebooks):
     * Data Cleaning - [github link](https://github.com/emenriquez/Springboard-Coursework/blob/master/Capstone%20Project%202/Data%20Wrangling%20-%20Cuisines.ipynb)
     * Data Exploration - [github link](https://github.com/emenriquez/Springboard-Coursework/blob/master/Capstone%20Project%202/EDA%20-%20Cuisines.ipynb)
