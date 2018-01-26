@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<title>Erik's Recipe Recommendation Engines</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+<style>
+body, html {
+    height: 100%;
+    font-family: "Inconsolata", sans-serif;
+}
+.bgimg {
+    background-position: center;
+    background-size: cover;
+    background-image: url("/static/catsushi.jpg");
+    min-height: 75%;
+}
+.menu {
+    display: none;
+}
+</style>
+<body>
+
+<!-- Links (sit on top) -->
+<div class="w3-top">
+  <div class="w3-row w3-padding w3-black">
+    <div class="w3-col s3">
+      <a href="#" class="w3-button w3-block w3-black">HOME</a>
+    </div>
+    <div class="w3-col s3">
+      <a href="#about" class="w3-button w3-block w3-black">ABOUT</a>
+    </div>
+    <div class="w3-col s3">
+      <a href="#engines" class="w3-button w3-block w3-black">ENGINES</a>
+    </div>
+    <div class="w3-col s3">
+      <a href="#links" class="w3-button w3-block w3-black">LINKS</a>
+    </div>
+  </div>
+</div>
+
+<!-- Header with image -->
+<header class="bgimg w3-display-container" id="home">
+  <div class="w3-display-left w3-left w3-hide-small">
+    <span class="w3-text-white" style="font-size:40px">Erik's Recipe <br>Recommendation<br>Engines</span>
+  </div>
+</header>
+
+<!-- Add a background color and large text to the whole page -->
+<div class="w3-sand w3-large">
+
+<!-- About Container -->
+<div class="w3-container" id="about">
+  <div class="w3-content" style="max-width:700px">
+    <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">ABOUT THIS PROJECT</span></h5>
+    <p>Food is a massive and complex arena in which culture, geography, climate, and social factors combine to create unique cuisines around the world. With the age of the internet, millions of recipes are now shared instantly and easily accessible. Many ingredients previously specific to certain regions of the world are now also widely available due to online commerce.</p>
+    <p>With a dataset containing information on the cuisine and ingredients for ~40,000 recipes, provided by Yummly, I have explored the ingredients that make up the signature flavors of cuisines around the world, along with some information on how they relate to each other. More details on the project can be found <strong><a href="#links">here</a></strong>.</p>
+    <p>This site hosts several recommendation engines built from the results of analysis of this data using Natural Language Processing techniques. Try them out!</p>
+    <img src="/static/wordcloud1.png" style="width:100%;max-width:1000px" class="w3-margin-top">
+  </div>
+</div>
+
+<!-- Engines Container -->
+<div class="w3-container" id="engines">
+  <div class="w3-content" style="max-width:700px">
+ 
+    <h5 class="w3-center w3-padding-48"><span class="w3-tag w3-wide">RECOMMENDATION ENGINES</span></h5>
+    <p><strong>Recipe ID Recommendations</strong></p>
+    <p>
+    Click <strong><a href="/simple/#engines">here</a></strong> to receive recipe recommendations based on Recipe ID numbers.
+    </p>
+    
+    <p><strong>Recipe Discovery</strong></p>
+    <p>
+    Click <strong><a href="/discovery/#engines">here</a></strong> to receive recipe recommendations similar to your recipe ID, from other cuisines.
+    </p>
+
+    <p><strong>Ingredient List-Based Recipe Recommendations</strong></p>
+    <p>
+    Click <strong><a href="/ingredient_list/#engines">here</a></strong> to receive recipe recommendations based on a list of ingredients that you have on hand.
+    </p>
+    
+    <p><strong>Complimentary Ingredient Recommendations</strong></p>
+    <p>
+    Click <strong><a href="/complimentary/#engines">here</a></strong> to receive complimentary ingredient suggestions that are likely to pair well with your favorite recipe ingredients!
+    </p>
+
+  </div>
+</div>
+    
+<img src="/static/07feast-custom1.jpg" style="width:100%;max-width:1000px margin-top:32px class="w3-margin-top">
+
+<!-- Additional Resources Container -->
+<div class="w3-container" id="links" style="padding-bottom:32px;">
+  <div class="w3-content" style="max-width:700px">
+    <h5 class="w3-center w3-padding-48"><span class="w3-tag w3-wide">ADDITIONAL RESOURCES</span></h5>
+    
+    <p><span class="w3-tag">Links</span></p>
+    <p>My pages - <a href="https://github.com/emenriquez">github</a>, <a href="https://www.linkedin.com/in/erik-enriquez/">LinkedIn</a></p>
+    <p>Project Repository - <a href="https://github.com/emenriquez/Springboard-Coursework/blob/master/Capstone%20Project%202">github</a></p>
+    <p>Yummly - <a href="yummly.com">Website</a></p>
+    
+    <p><span class="w3-tag">Acknowledgements</span></p>
+    
+    <p>I would like to thank the Springboard Data Science Career Track course, for all of the wonderful resources and tools that they have provided on my journey as an aspiring data scientist.</p>
+    <p>I would especially like to thank Alex Rutherford, who is my data science mentor and introduced me to the many techniques that made this project possible.</p>
+    <p>This site was built using templates and resources provided by <strong><a href="w3schools.com">w3schools.com</a></strong></p>
+  </div>
+</div>
+
+<!-- End page content -->
+</div>
+
+<!-- Footer -->
+<footer class="w3-center w3-light-grey w3-padding-48 w3-large">
+  <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-text-green">w3.css</a></p>
+</footer>
+
+</body>
+</html>
