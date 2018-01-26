@@ -14,7 +14,9 @@
 
 ## 1. Introduction <a class="anchor" id="Introduction"></a>
 
-Problem: Food is a massive and complex arena in which culture, geography, climate, and social factors combine to create unique cuisines around the world. With the age of the internet, millions of recipes are now shared instantly and easily accessible. Many ingredients previously specific to certain regions of the world are now also widely available due to online commerce. 
+**Problem**
+
+Food is a massive and complex arena in which culture, geography, climate, and social factors combine to create unique cuisines around the world. With the age of the internet, millions of recipes are now shared instantly and easily accessible. Many ingredients previously specific to certain regions of the world are now also widely available due to online commerce. 
 
 **Objectives**
 
@@ -397,7 +399,7 @@ The next section will be a bit messy with many iterations in place to converge o
 
 * Next, I take only the singular form of each ingredient, so that there aren't unnecessary duplicates (e.g. 'onions' and 'onion')
 
-Note: some words don't play nicely with NLTK's database of vocabulary (such as 'garlic', which tends to be classified as an adjective. e.g. 'garlic cloves' is simplified as 'clove') so I will include two lists of words for this process that will be updated throughout this section. They are **'words_to_exclude'** for words I do not want in my final list, and **'words_to_include'** for words that I do not want filtered out.
+Note: some words don't play nicely with NLTK's database of vocabulary (such as 'garlic', which tends to be classified as an adjective. e.g. 'garlic cloves' is simplified as 'clove') so I will include two lists of words for this process that will be updated throughout this section. They are **'words to exclude'** for words I do not want in my final list, and **'words to include'** for words that I do not want filtered out.
 
 * Next, there are some ingredients in our dataset are either misspelled or incomplete in some way (e.g. 'any', 'extra', 'asian') we can deal with misspellings later, but first, we should make sure that some of the words that are falling through the cracks do not, such as 'flour', 'couscous', 'pudding', etc.
 
@@ -627,7 +629,7 @@ Only 17 rows needed to be removed from the dataset, and now it is ready for expo
 
 The **ingredients** column provides a list of ingredients, while the **words** column provides us with a unique set of words found in each respective ingredients list. We will use both columns for analysis.
 
-### 1. What are the most frequently used ingredients in each cuisine?
+### 3.1. What are the most frequently used ingredients in each cuisine?
 
 We can get an idea of the ingredients used in each cuisine by splitting ingredients and words by categories.
 
@@ -703,7 +705,6 @@ Below is a preview of the collection of wordclouds generated from their respecti
 ![png](images/mr_output_41_1.png)
 ![png](images/mr_output_41_2.png)
 ![png](images/mr_output_41_3.png)
-![png](images/mr_output_41_4.png)
 
 There are a few things we can see by looking briefly through the wordclouds above. Firstly, ingredients like salt and onions seem to be ubiquitous, represented in every cuisine of our dataset. Alternatively, there are some clearly unique ingredients widely used in some cuisines, such as cumin in Mexican recipes. These standouts may definitely help us to build a model of cuisine prediction later on, if they can be weighted more importantly than those which appear in all cuisines.
 
@@ -723,7 +724,7 @@ It may also be useful to see which cuisines use the widest variety of ingredient
 We can see that although Moroccan, Indian and Thai lead with the most ingredients per recipe, the kitchens of Mexican, Italian and Southern U.S. cuisines are stocked with a larger variety of ingredients in our dataset. In all cases, Brazilian cuisine tends to be a simpler affair.
 
 
-### Preparing data for Vectorization (TF-IDF weighted Processing)
+### 3.2 Preparing data for Vectorization (TF-IDF weighted Processing)
 
 While the visualizations above are nice, ubiquitous ingredients such as onion, salt, and garlic tend to obscure the ingredients unique to each cuisine. In order to account for this distribution and extract the ingredients that form a "signature" of each cuisine, we will use TF-IDF weighting which will give higher importanct to words which mainly appear in their respective category, and not across many cuisines.
 
@@ -763,7 +764,7 @@ Now that we seem to have isolated the valuable data, we can return to our wordcl
 ![png](images/mr_output_51_19.png)
 
 
-### TF-IDF for each recipe
+### 3.3 TF-IDF for each recipe
 
 Now that we have looked at ingredients grouped together by their cuisine, we can perform a similar representation and visualization by processing each recipe individually into a TF-IDF weighted format.
 
@@ -782,7 +783,7 @@ We can see above that there are some nice groupings for most of the data above! 
 
 There are two corrections we can make to attempt to fix this. First, the distribution of recipes should be equalized, so that each cuisine is represented an approximately equal amount. Second, This model still includes ubiquitous ingredients such as Salt, Onion, Garlic, etc.! These entries should be excluded, similar to the previous work that was done during building of the tf-idf model. Making these corrections are likely to improve the groupings of recipes performed by t-SNE.
 
-### PCA projection mapping of recipes
+### 3.4 PCA projection mapping of recipes
 
 We can also try to side-step any issues that the t-SNE algorithm may be having in attempting to cluster our recipes by using simpler dimensionality reduction method such as PCA to analyze the clustering of recipes ourselves. PCA will only project the data onto dimensions linearly using principal components (those directions along which there is the most variance in the data). What we lose in clustering potential from t-SNE, here we can gain in interpretability where we can perform further analysis.
 
@@ -790,7 +791,7 @@ We can also try to side-step any issues that the t-SNE algorithm may be having i
 ![png](images/fr_output_58_0.png)
 
 
-### PCA Cluster Analysis
+### 3.5 PCA Cluster Analysis
 
 By looking at the PCA projection plot above, we can see that there is again some natural clustering of the data once each recipe is labeled by its respective cuisine. By analysing these clusters using silhouette analysis, we can get more insight into both our cuisines and the relationships that they share between one another.
 
@@ -800,7 +801,7 @@ Above we have a matrix representation of the average silhouette scores between e
 
 While we can make some inferences at this point about the distinctness of each cuisine by using the heatmap above, it must be noted that the heatmap was generated from our previous PCA projection of the data onto 2 dimensions. While 2-dimensional data makes it easier for us humans to visualize the data, there is information lost in doing this, and the clusters may overlap in ways that they would not otherwise in their original (716-dimensional!) space in our TF-IDF matrix. Thankfully, we can perform the same analysis on our clusters without being able to visualize the data.
 
-### Cluster Analysis in Original TF-IDF Matrix Space
+### 3.6 Cluster Analysis in Original TF-IDF Matrix Space
 
 ![png](images/fr_output_63_0.png)
 
@@ -816,7 +817,7 @@ Additionally from our silhouette score matrix, we can see that some cuisines suc
 
 As we saw ealier, it seem as if cuisines like Italian and Southern U.S. have a spread that overlaps more with other cuisines than cuisines like Indian and Korean which are the most distinct from other cuisines on average. There could be many factors that makes the recipe profiles of certain cuisines overlap highly with other. It could be due to a wide flavor profile that the cuisine has adopted over time, or alternatively it might be an indication of historical influence that the cuisine has had on other cuisines that has caused other cuisines to adopt the flavors of the original cuisine.
 
-### Ingredient Pairings (Co-occurence)
+### 3.7 Ingredient Pairings (Co-occurence)
 
 Now that we've looked at how cuisines relate to one another, as well as analyzed the relationships between recipes within these cuisines, we can take a look at how the ingredients themselves relate. This will be done by looking at the number of times each ingredient is seen together with other ingredients in any given recipe. The result will be a co-occurence matrix, as shown below.
 
@@ -975,7 +976,7 @@ The strong presence of values along the diagonal indicate that the model mostly 
 
 ## 6. Recommendation Engines <a class="anchor" id="Engine"></a>
 
-One particularly useful application of the analysis and processing that has been done on this dataset is generating recommendations for new recipes that users can try. I have used the data to build 2 recommendation engines:
+One particularly useful application of the analysis and processing that has been done on this dataset is generating recommendations for new recipes that users can try. I have used the data to build 4 recommendation engines:
 
 #### 6.1 Similar Recipe Recommendations
 
