@@ -8,8 +8,9 @@
 4. [Analysis Summary](#Findings)
 5. [Multinomial Classification Models](#Models)
 6. [Recommendation Engines](#Engine)
-7. [Conoclusions and Next Steps](#Conclusions)
-7. [Resources](#Resources)
+7. [Heroku/Flask Web App](#heroku)
+8. [Conoclusions and Next Steps](#Conclusions)
+9. [Resources](#Resources)
 
 ## 1. Introduction <a class="anchor" id="Introduction"></a>
 
@@ -1136,9 +1137,13 @@ It should be noted that due to their exceptional ubiquitous use across all recip
 
 Omission of these ingredients was a key part in stabilizing the performance of the engines, since these ingredients seem to dominate all others. Also, by removing these the recommendations that are given to the user are more likely to be insightful and meaningful, instead of just suggesting to a user that they could add some water or salt to compliment their recipes!
 
-If you're interested in playing around with these engines with your own recipes and ingredients, check out the github link to the code **[here](https://github.com/emenriquez/Springboard-Coursework/blob/master/Capstone%20Project%202/Recommendation%20Engines%20-%20Cuisines.ipynb)**.
+## 7. Live Heroku/Flask Web App <a class="anchor" id="heroku"></a>
 
-## 7. Conclusions and Next Steps <a class="anchor" id="Conclusions"></a>
+In order to extend the results of this project and showcase the functional usage of the recommendation engines, a python web app was developed using the Flask and Heroku platforms and is live for user demonstration.
+
+If you're interested in playing around with these engines with your own recipes and ingredients, come check it out **[here!!](https://lit-caverns-54863.herokuapp.com)**.
+
+## 8. Conclusions and Next Steps <a class="anchor" id="Conclusions"></a>
 
 #### Model Performance
 
@@ -1160,7 +1165,11 @@ In addition to the exploratory analysis and modeling, the recommendation engines
 
 To improve on the demonstrated engine prototypes, adding additional data to this dataset such as recipe names in lieu of just id numbers, as well as user rating information for each recipe will aid greatly in building a more fleshed-out next version of the recommendation engines. There is an API available from Yummly which could serve as a source for both more data to expand on this set, as well as provide more information on user ratings, recipe names, and other recipe metadata that could greatly enhance the funcationality of the recommendation engines.
 
-## 8. Resources <a class="anchor" id="Resources"></a>
+#### Live Heroku Web App
+
+The **[web app](https://lit-caverns-54863.herokuapp.com)** is still in its first version, and serves primarily as a demo for the recommendation engine functionality with the Yummly dataset. The next immediate improvements that are being carried out are user text preprocessing and more robust user input error handling.
+
+## 9. Resources <a class="anchor" id="Resources"></a>
 
 * Yummly - [Homepage](https://www.yummly.com/), [API Information](https://developer.yummly.com/) 
 * Dataset - [Kaggle's "What's Cooking?" Competition Site](https://www.kaggle.com/c/whats-cooking/data)
@@ -1170,3 +1179,4 @@ To improve on the demonstrated engine prototypes, adding additional data to this
     * Data Exploration - [github link](https://github.com/emenriquez/Springboard-Coursework/blob/master/Capstone%20Project%202/EDA%20-%20Cuisines.ipynb)
     * Classification Models - [github link](https://github.com/emenriquez/Springboard-Coursework/blob/master/Capstone%20Project%202/Classification%20Models%20-%20Cuisines.ipynb)
     * Recommendation Engines - [github link](https://github.com/emenriquez/Springboard-Coursework/blob/master/Capstone%20Project%202/Recommendation%20Engines%20-%20Cuisines.ipynb)
+* ___Heroku Web App for Recommendation Engines___ - [site link](https://lit-caverns-54863.herokuapp.com)
