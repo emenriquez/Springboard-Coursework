@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<title>Recommendation Engines</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+<style>
+body, html {
+    height: 100%;
+    font-family: "Inconsolata", sans-serif;
+}
+.bgimg {
+    background-position: center;
+    background-size: cover;
+    background-image: url("/static/catsushi.jpg");
+    min-height: 75%;
+}
+.menu {
+    display: none;
+}
+</style>
+<body>
+
+<!-- Links (sit on top) -->
+<div class="w3-top">
+  <div class="w3-row w3-padding w3-black">
+    <div class="w3-col s3">
+      <a href="#" class="w3-button w3-block w3-black">HOME</a>
+    </div>
+    <div class="w3-col s3">
+      <a href="/#about" class="w3-button w3-block w3-black">ABOUT</a>
+    </div>
+    <div class="w3-col s3">
+      <a href="/#engines" class="w3-button w3-block w3-black">ENGINES</a>
+    </div>
+    <div class="w3-col s3">
+      <a href="/#links" class="w3-button w3-block w3-black">LINKS</a>
+    </div>
+  </div>
+</div>
+
+<!-- Header with image -->
+<header class="bgimg w3-display-container" id="home">
+  <div class="w3-display-left w3-left w3-hide-small">
+    <span class="w3-text-white" style="font-size:40px">Erik's Recipe <br>Recommendation<br>Engines</span>
+  </div>
+</header>
+
+<!-- Add a background color and large text to the whole page -->
+<div class="w3-sand w3-large">
+
+<!-- Engines Container -->
+<div class="w3-container" id="engines">
+  <div class="w3-content" style="max-width:700px">
+ 
+    <h5 class="w3-center w3-padding-48"><span class="w3-tag w3-wide">RECOMMENDATION ENGINE</span></h5>
+    
+    <!-- FORM Container-->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                        <p>{{ message[1] }}</p>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        <form action="" method="post">
+ 
+            <div class="input text">
+                {{ form.recipe.label }} {{ form.recipe }}
+            </div>
+ 
+            <div class="input submit">
+                <input type="submit" value="SEARCH" />
+            </div>
+        </form>
+
+  </div>
+</div>
+    
+<img src="/static/07feast-custom1.jpg" style="width:100%;max-width:1000px margin-top:32px class="w3-margin-top">
+
+<!-- End page content -->
+</div>
+
+<!-- Footer -->
+<footer class="w3-center w3-light-grey w3-padding-48 w3-large">
+  <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-text-green">w3.css</a></p>
+</footer>
+
+</body>
+</html>
